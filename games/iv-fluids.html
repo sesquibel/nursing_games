@@ -306,25 +306,48 @@ header {
 .cell-label { font-size: 0.75rem; font-family: 'Fira Code', monospace; color: var(--muted); }
 
 /* ============================================
-   MATCHING GAME
+   MATCHING GAME — LINE CONNECTOR VERSION
    ============================================ */
-#match-view { padding: 32px; }
+#match-view {
+  padding: 28px 32px;
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+}
 
-.match-header { text-align: center; margin-bottom: 32px; }
+.match-header { text-align: center; margin-bottom: 24px; }
 .match-header h2 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
-.match-header p { color: var(--muted); }
+.match-header p { color: var(--muted); font-size: 0.9rem; }
 
-.match-arena {
+/* The outer wrapper positions columns + SVG overlay together */
+.match-arena-wrap {
+  position: relative;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+  flex: 1;
+}
+
+/* SVG sits on top of everything, pointer-events none so clicks pass through */
+#lines-svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  overflow: visible;
+}
+
+.match-cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  max-width: 900px;
-  margin: 0 auto;
+  gap: 80px;
+  padding: 8px 0;
 }
 
 .match-col-label {
   font-family: 'Fira Code', monospace;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
@@ -332,51 +355,95 @@ header {
   margin-bottom: 12px;
 }
 
-.match-item {
-  padding: 14px 18px;
+.match-node {
+  padding: 13px 18px;
   border-radius: 10px;
   border: 2px solid var(--border);
   background: var(--surface);
   cursor: pointer;
   transition: all 0.2s;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   line-height: 1.4;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   user-select: none;
+  position: relative;
+  z-index: 6;
 }
 
-.match-item:hover { border-color: var(--accent); transform: translateX(2px); }
-.match-item.selected { border-color: var(--accent); background: rgba(22,163,74,0.08); }
-.match-item.matched-correct { border-color: var(--accent); background: rgba(22,163,74,0.12); opacity: 0.7; pointer-events: none; }
-.match-item.matched-wrong { border-color: var(--hyper); background: rgba(220,38,38,0.08); animation: shake 0.3s; }
+.match-node:hover:not(.matched-correct) {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(22,163,74,0.15);
+}
 
-@keyframes shake {
-  0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)}
+.match-node.selected {
+  border-color: var(--accent);
+  background: rgba(22,163,74,0.08);
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.2);
+}
+
+.match-node.matched-correct {
+  border-color: var(--accent);
+  background: rgba(22,163,74,0.1);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.match-node.matched-wrong {
+  border-color: var(--hyper);
+  background: rgba(220,38,38,0.07);
+  animation: nodeShake 0.35s ease;
+}
+
+@keyframes nodeShake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}
+  60%{transform:translateX(6px)}
+}
+
+.match-footer {
+  text-align: center;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 .match-progress {
-  text-align: center;
-  margin-top: 20px;
   font-family: 'Fira Code', monospace;
   color: var(--muted);
   font-size: 0.85rem;
 }
 
 .btn-new-match {
-  display: block;
-  margin: 16px auto 0;
-  padding: 12px 32px;
+  padding: 11px 32px;
   background: var(--text);
   color: #fff;
   border: none;
   border-radius: 8px;
   font-family: 'Syne', sans-serif;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 .btn-new-match:hover { background: var(--accent); transform: translateY(-1px); }
+
+/* Animated draw-in line */
+.match-line {
+  stroke-linecap: round;
+  fill: none;
+  stroke-width: 2.5;
+  transition: all 0.3s;
+}
+
+.match-line.correct { stroke: var(--accent); }
+.match-line.pending { stroke: var(--accent); stroke-dasharray: 6 4; animation: dashMove 0.6s linear infinite; }
+
+@keyframes dashMove {
+  to { stroke-dashoffset: -20; }
+}
 
 /* ============================================
    QUIZ VIEW
@@ -582,7 +649,7 @@ header {
       <div class="fluid-sidebar">
         <div class="sidebar-section-label">Isotonic</div>
         <button class="fluid-btn" onclick="showFluid('ns')"><span class="tone-dot" style="background:#2563eb"></span>0.9% Normal Saline</button>
-        <button class="fluid-btn" onclick="showFluid('lr')"><span class="tone-dot" style="background:#2563eb"></span>Lactated Ringer's</button>
+        <button class="fluid-btn" onclick="showFluid('lr')"><span class="tone-dot" style="background:#2563eb"></span>Lactated Ringers</button>
         <button class="fluid-btn" onclick="showFluid('d5ns')"><span class="tone-dot" style="background:#2563eb"></span>D5NS</button>
 
         <div class="sidebar-section-label">Hypotonic</div>
@@ -613,11 +680,26 @@ header {
   <div id="match-view" class="view">
     <div class="match-header">
       <h2>Match the Fluid 🔗</h2>
-      <p>Match each IV fluid to its primary indication. Click a fluid, then click its matching indication.</p>
+      <p>Click a fluid on the left, then click its matching indication on the right. A line will connect them!</p>
     </div>
-    <div id="match-arena" class="match-arena"></div>
-    <div class="match-progress" id="match-progress"></div>
-    <button class="btn-new-match" onclick="initMatch()">New Round ↺</button>
+    <div class="match-arena-wrap">
+      <!-- SVG overlay for drawing lines -->
+      <svg id="lines-svg"></svg>
+      <div class="match-cols">
+        <div id="fluids-col">
+          <div class="match-col-label">IV Fluids</div>
+          <div id="fluids-list"></div>
+        </div>
+        <div id="indics-col">
+          <div class="match-col-label">Indications</div>
+          <div id="indics-list"></div>
+        </div>
+      </div>
+    </div>
+    <div class="match-footer">
+      <div class="match-progress" id="match-progress">Select a fluid to begin</div>
+      <button class="btn-new-match" onclick="initMatch()">New Round ↺</button>
+    </div>
   </div>
 
   <!-- QUIZ -->
@@ -869,7 +951,6 @@ const MATCH_PAIRS = [
 // =============================================
 let xp = 0;
 let quizQ = [], quizIdx = 0, quizScore = 0, quizAnswered = false, quizType = 'all';
-let matchSelected = null, matchFluidSel = null, matchIndicSel = null, matchScore = 0, matchTotal = 0;
 
 function addXP(n) {
   xp += n;
@@ -884,7 +965,7 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(tab + '-view').classList.add('active');
   document.querySelectorAll('.tab-btn')[['explore','match','quiz'].indexOf(tab)].classList.add('active');
-  if (tab === 'match' && document.getElementById('match-arena').innerHTML === '') initMatch();
+  if (tab === 'match' && document.getElementById('fluids-list').innerHTML === '') initMatch();
   if (tab === 'quiz') renderQuizSelect();
 }
 
@@ -954,62 +1035,179 @@ function showFluid(key) {
 }
 
 // =============================================
-// MATCHING
+// MATCHING GAME — LINE CONNECTOR
 // =============================================
+let matchPairs = [];
+let matchFluidSel = null;
+let matchScore = 0;
+let matchTotal = 0;
+let matchLines = []; // { fluidId, indicId, correct }
+
 function initMatch() {
-  matchScore = 0; matchTotal = 0;
-  matchFluidSel = null; matchIndicSel = null;
-  const pairs = [...MATCH_PAIRS].sort(() => Math.random()-0.5).slice(0,6);
+  matchFluidSel = null;
+  matchScore = 0;
+  matchLines = [];
+
+  // Pick 6 random pairs
+  const pairs = [...MATCH_PAIRS].sort(() => Math.random() - 0.5).slice(0, 6);
   matchTotal = pairs.length;
+  matchPairs = pairs;
 
-  const fluids = pairs.map(p => ({ text: p.fluid, id: p.fluid, type: 'fluid' })).sort(() => Math.random()-0.5);
-  const indics = pairs.map(p => ({ text: p.indication, id: p.fluid, type: 'indic' })).sort(() => Math.random()-0.5);
+  // Shuffle each column independently
+  const fluids = [...pairs].sort(() => Math.random() - 0.5);
+  const indics = [...pairs].sort(() => Math.random() - 0.5);
 
-  const arena = document.getElementById('match-arena');
-  arena.innerHTML = `
-    <div>
-      <div class="match-col-label">IV Fluids</div>
-      ${fluids.map(f => `<div class="match-item" id="fluid-${f.id.replace(/\s/g,'_')}" onclick="selectMatch('fluid','${f.id}')">${f.text}</div>`).join('')}
-    </div>
-    <div>
-      <div class="match-col-label">Indications</div>
-      ${indics.map(i => `<div class="match-item" id="indic-${i.id.replace(/\s/g,'_')}" onclick="selectMatch('indic','${i.id}')">${i.text}</div>`).join('')}
-    </div>
-  `;
+  // Render fluid nodes
+  document.getElementById('fluids-list').innerHTML = fluids.map(p =>
+    `<div class="match-node" id="fn-${safeId(p.fluid)}" data-id="${p.fluid}" onclick="selectFluid('${escJs(p.fluid)}')">${p.fluid}</div>`
+  ).join('');
+
+  // Render indication nodes
+  document.getElementById('indics-list').innerHTML = indics.map(p =>
+    `<div class="match-node" id="in-${safeId(p.fluid)}" data-id="${p.fluid}" onclick="selectIndic('${escJs(p.fluid)}')">${p.indication}</div>`
+  ).join('');
+
+  // Clear SVG
+  document.getElementById('lines-svg').innerHTML = '';
   document.getElementById('match-progress').textContent = `Matched: 0 / ${matchTotal}`;
 }
 
-function selectMatch(type, id) {
-  if (type === 'fluid') {
-    document.querySelectorAll('.match-item').forEach(el => { if (el.id.startsWith('fluid-')) el.classList.remove('selected'); });
-    matchFluidSel = id;
-    document.getElementById('fluid-' + id.replace(/\s/g,'_')).classList.add('selected');
-  } else {
-    document.querySelectorAll('.match-item').forEach(el => { if (el.id.startsWith('indic-')) el.classList.remove('selected'); });
-    matchIndicSel = id;
-    document.getElementById('indic-' + id.replace(/\s/g,'_')).classList.add('selected');
+// Make a safe HTML id from any string
+function safeId(str) {
+  return str.replace(/[^a-zA-Z0-9]/g, '_');
+}
+
+// Escape string for use inside JS onclick single-quoted attribute
+function escJs(str) {
+  return str.replace(/'/g, "\\'");
+}
+
+function selectFluid(id) {
+  // Ignore already matched
+  const el = document.getElementById('fn-' + safeId(id));
+  if (!el || el.classList.contains('matched-correct')) return;
+
+  // Deselect previous fluid selection
+  document.querySelectorAll('#fluids-list .match-node').forEach(n => n.classList.remove('selected'));
+
+  matchFluidSel = id;
+  el.classList.add('selected');
+  document.getElementById('match-progress').textContent = 'Now click the matching indication →';
+}
+
+function selectIndic(id) {
+  if (!matchFluidSel) {
+    document.getElementById('match-progress').textContent = '← Select a fluid first!';
+    return;
   }
 
-  if (matchFluidSel && matchIndicSel) {
-    const fEl = document.getElementById('fluid-' + matchFluidSel.replace(/\s/g,'_'));
-    const iEl = document.getElementById('indic-' + matchIndicSel.replace(/\s/g,'_'));
-    if (matchFluidSel === matchIndicSel) {
-      fEl.classList.remove('selected'); fEl.classList.add('matched-correct');
-      iEl.classList.remove('selected'); iEl.classList.add('matched-correct');
-      matchScore++;
-      addXP(10);
-      document.getElementById('match-progress').textContent = `Matched: ${matchScore} / ${matchTotal}`;
-      if (matchScore === matchTotal) {
-        setTimeout(() => { document.getElementById('match-progress').textContent = `🎉 Perfect! All ${matchTotal} matched! +${matchTotal*10} XP`; }, 200);
-      }
+  const indicEl = document.getElementById('in-' + safeId(id));
+  if (!indicEl || indicEl.classList.contains('matched-correct')) return;
+
+  const fluidEl = document.getElementById('fn-' + safeId(matchFluidSel));
+  const correct = matchFluidSel === id;
+
+  if (correct) {
+    // Mark both as matched
+    fluidEl.classList.remove('selected');
+    fluidEl.classList.add('matched-correct');
+    indicEl.classList.add('matched-correct');
+
+    // Draw a permanent correct line
+    drawLine(matchFluidSel, id, true);
+
+    matchScore++;
+    addXP(10);
+
+    if (matchScore === matchTotal) {
+      document.getElementById('match-progress').textContent = `🎉 Perfect! All ${matchTotal} matched! +${matchTotal * 10} XP`;
     } else {
-      fEl.classList.remove('selected'); fEl.classList.add('matched-wrong');
-      iEl.classList.remove('selected'); iEl.classList.add('matched-wrong');
-      setTimeout(() => { fEl.classList.remove('matched-wrong'); iEl.classList.remove('matched-wrong'); }, 600);
+      document.getElementById('match-progress').textContent = `Matched: ${matchScore} / ${matchTotal}`;
     }
-    matchFluidSel = null; matchIndicSel = null;
+  } else {
+    // Flash wrong on both
+    fluidEl.classList.remove('selected');
+    fluidEl.classList.add('matched-wrong');
+    indicEl.classList.add('matched-wrong');
+
+    // Draw a temporary wrong line then remove it
+    const lineId = drawLine(matchFluidSel, id, false);
+    setTimeout(() => {
+      fluidEl.classList.remove('matched-wrong');
+      indicEl.classList.remove('matched-wrong');
+      const wrongLine = document.getElementById(lineId);
+      if (wrongLine) wrongLine.remove();
+    }, 700);
+
+    document.getElementById('match-progress').textContent = `Not quite — try again! (${matchScore} / ${matchTotal})`;
   }
+
+  matchFluidSel = null;
 }
+
+function drawLine(fluidId, indicId, correct) {
+  const svg = document.getElementById('lines-svg');
+  const wrap = document.querySelector('.match-arena-wrap');
+  const wrapRect = wrap.getBoundingClientRect();
+
+  const fEl = document.getElementById('fn-' + safeId(fluidId));
+  const iEl = document.getElementById('in-' + safeId(indicId));
+
+  if (!fEl || !iEl) return;
+
+  const fRect = fEl.getBoundingClientRect();
+  const iRect = iEl.getBoundingClientRect();
+
+  // Right edge of fluid node → left edge of indic node
+  const x1 = fRect.right - wrapRect.left;
+  const y1 = fRect.top + fRect.height / 2 - wrapRect.top;
+  const x2 = iRect.left - wrapRect.left;
+  const y2 = iRect.top + iRect.height / 2 - wrapRect.top;
+
+  // Bezier control points for a nice curve
+  const cp1x = x1 + (x2 - x1) * 0.45;
+  const cp1y = y1;
+  const cp2x = x1 + (x2 - x1) * 0.55;
+  const cp2y = y2;
+
+  const lineId = 'line-' + safeId(fluidId) + '-' + safeId(indicId);
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('id', lineId);
+  path.setAttribute('d', `M ${x1} ${y1} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x2} ${y2}`);
+  path.setAttribute('class', `match-line ${correct ? 'correct' : 'pending'}`);
+
+  // Animate the line drawing in
+  if (correct) {
+    const length = path.getTotalLength ? 200 : 200; // approximate
+    path.style.strokeDasharray = 300;
+    path.style.strokeDashoffset = 300;
+    path.style.transition = 'stroke-dashoffset 0.4s ease';
+    svg.appendChild(path);
+    requestAnimationFrame(() => {
+      path.style.strokeDashoffset = 0;
+    });
+  } else {
+    // Wrong line — red dashed
+    path.style.stroke = 'var(--hyper)';
+    path.style.strokeDasharray = '6 4';
+    svg.appendChild(path);
+  }
+
+  return lineId;
+}
+
+// Redraw lines on window resize so they stay accurate
+window.addEventListener('resize', () => {
+  // Only redraw if match view is active
+  if (!document.getElementById('match-view').classList.contains('active')) return;
+  // Clear and redraw all correct lines
+  document.getElementById('lines-svg').innerHTML = '';
+  document.querySelectorAll('#fluids-list .matched-correct').forEach(fEl => {
+    const fId = fEl.dataset.id;
+    drawLine(fId, fId, true);
+  });
+});
 
 // =============================================
 // QUIZ
