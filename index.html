@@ -1,1006 +1,1317 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NurseCore — Study Portal</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg: #f8f5f0;
-  --surface: #ffffff;
-  --surface2: #f0ece5;
-  --border: #e0d8cc;
-  --text: #1c1a17;
-  --muted: #8a8070;
-  --accent: #c8441a;
-  --accent2: #2563eb;
-  --accent3: #059669;
-  --gold: #d97706;
-  --ink: #1c1a17;
-}
-
-* { margin:0; padding:0; box-sizing:border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* ── GRAIN TEXTURE ── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ── HERO ── */
-.hero {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  padding: 0 0 0 0;
-  overflow: hidden;
-}
-
-/* Big diagonal background accent */
-.hero::after {
-  content: '';
-  position: absolute;
-  top: -120px;
-  right: -200px;
-  width: 700px;
-  height: 700px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(200,68,26,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-/* ── TOPBAR ── */
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px 48px;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-  z-index: 10;
-}
-
-.wordmark {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.wordmark-main {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
-  font-weight: 900;
-  color: var(--text);
-  letter-spacing: -1px;
-}
-
-.wordmark-main span { color: var(--accent); }
-
-.wordmark-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.xp-counter {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  padding: 8px 18px;
-}
-
-.xp-flame { font-size: 1rem; }
-.xp-val {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--gold);
-}
-
-.xp-label {
-  font-size: 0.72rem;
-  color: var(--muted);
-}
-
-.streak-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(217,119,6,0.08);
-  border: 1px solid rgba(217,119,6,0.25);
-  border-radius: 100px;
-  padding: 8px 16px;
-  font-size: 0.78rem;
-  color: var(--gold);
-  font-weight: 600;
-}
-
-/* ── HERO CONTENT ── */
-.hero-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 60px 48px 40px;
-  position: relative;
-  z-index: 2;
-  max-width: 900px;
-}
-
-.hero-eyebrow {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.hero-eyebrow::before {
-  content: '';
-  display: block;
-  width: 32px;
-  height: 2px;
-  background: var(--accent);
-}
-
-.hero-headline {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(3rem, 6vw, 5.5rem);
-  font-weight: 900;
-  line-height: 0.95;
-  letter-spacing: -2px;
-  margin-bottom: 24px;
-  color: var(--text);
-}
-
-.hero-headline em {
-  font-style: italic;
-  color: var(--accent);
-}
-
-.hero-sub {
-  font-size: 1.1rem;
-  color: var(--muted);
-  max-width: 520px;
-  line-height: 1.7;
-  font-weight: 300;
-  margin-bottom: 40px;
-}
-
-/* STATS ROW */
-.stats-row {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.stat-number {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 0.75rem;
-  color: var(--muted);
-  font-family: 'DM Mono', monospace;
-  letter-spacing: 1px;
-}
-
-/* ── SCROLL CUE ── */
-.scroll-cue {
-  padding: 20px 48px;
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--muted);
-  font-size: 0.8rem;
-  font-family: 'DM Mono', monospace;
-  letter-spacing: 1px;
-  animation: bounce 2.5s ease-in-out infinite;
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(6px); }
-}
-
-/* ── SECTION: ACTIVE GAMES ── */
-.section {
-  position: relative;
-  z-index: 1;
-  padding: 80px 48px;
-}
-
-.section-divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg, var(--accent) 0%, var(--border) 40%, transparent 100%);
-  margin-bottom: 48px;
-}
-
-.section-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.section-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.4rem;
-  font-weight: 700;
-  letter-spacing: -1px;
-  line-height: 1.1;
-}
-
-.section-title span { color: var(--accent); font-style: italic; }
-
-.section-meta {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--muted);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-/* ── GAME CARDS ── */
-.games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
-}
-
-.game-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-.game-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-  border-color: transparent;
-}
-
-.game-card-top {
-  padding: 28px 28px 20px;
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Decorative corner accent */
-.game-card-top::after {
-  content: '';
-  position: absolute;
-  top: -30px;
-  right: -30px;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  opacity: 0.07;
-  transition: all 0.3s;
-}
-
-.game-card:hover .game-card-top::after {
-  transform: scale(2);
-  opacity: 0.12;
-}
-
-.card-tag {
-  display: inline-block;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 4px;
-  margin-bottom: 16px;
-}
-
-.card-icon {
-  font-size: 2.8rem;
-  margin-bottom: 14px;
-  display: block;
-  transition: transform 0.3s;
-}
-
-.game-card:hover .card-icon { transform: scale(1.1) rotate(-3deg); }
-
-.card-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.35rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-  line-height: 1.2;
-}
-
-.card-desc {
-  font-size: 0.83rem;
-  color: var(--muted);
-  line-height: 1.6;
-  font-weight: 300;
-}
-
-.card-features {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 14px;
-}
-
-.feature-pill {
-  padding: 3px 10px;
-  border-radius: 100px;
-  font-size: 0.68rem;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-family: 'DM Mono', monospace;
-}
-
-.game-card-bottom {
-  padding: 14px 28px 18px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-cta {
-  font-size: 0.82rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: gap 0.2s;
-}
-
-.game-card:hover .card-cta { gap: 10px; }
-
-.card-xp {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--gold);
-  background: rgba(217,119,6,0.08);
-  border: 1px solid rgba(217,119,6,0.2);
-  padding: 3px 10px;
-  border-radius: 100px;
-}
-
-/* CARD COLOR THEMES */
-.card-body { --card-color: #c8441a; }
-.card-body .game-card-top::after { background: #c8441a; }
-.card-body .card-tag { background: rgba(200,68,26,0.08); color: #c8441a; border: 1px solid rgba(200,68,26,0.2); }
-.card-body .card-cta { color: #c8441a; }
-
-.card-iv { --card-color: #059669; }
-.card-iv .game-card-top::after { background: #059669; }
-.card-iv .card-tag { background: rgba(5,150,105,0.08); color: #059669; border: 1px solid rgba(5,150,105,0.2); }
-.card-iv .card-cta { color: #059669; }
-
-.card-el { --card-color: #2563eb; }
-.card-el .game-card-top::after { background: #2563eb; }
-.card-el .card-tag { background: rgba(37,99,235,0.08); color: #2563eb; border: 1px solid rgba(37,99,235,0.2); }
-.card-el .card-cta { color: #2563eb; }
-
-/* ── COMING SOON CARDS ── */
-.coming-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
-}
-
-.coming-card {
-  background: var(--surface);
-  border: 1px dashed var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.coming-card:hover { opacity: 1; }
-
-.coming-icon { font-size: 1.8rem; margin-bottom: 10px; }
-.coming-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
-.coming-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
-.coming-badge {
-  display: inline-block;
-  margin-top: 10px;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  padding: 3px 8px;
-  border-radius: 4px;
-}
-
-/* ── ROADMAP SECTION ── */
-.roadmap-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-}
-
-.roadmap-course {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 22px;
-  transition: all 0.2s;
-}
-
-.roadmap-course:hover {
-  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
-  transform: translateY(-2px);
-}
-
-.rc-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.rc-icon {
-  width: 40px; height: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  flex-shrink: 0;
-}
-
-.rc-name { font-weight: 700; font-size: 0.95rem; }
-.rc-sub { font-size: 0.72rem; color: var(--muted); }
-
-.rc-topics {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.rc-topic {
-  font-size: 0.78rem;
-  color: var(--muted);
-  padding: 4px 0;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.rc-topic:last-child { border-bottom: none; }
-.rc-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-
-/* ── FOOTER ── */
-footer {
-  position: relative;
-  z-index: 1;
-  border-top: 1px solid var(--border);
-  padding: 32px 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.footer-left {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-
-.footer-left span { color: var(--accent); }
-
-.footer-right {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--muted);
-  letter-spacing: 1px;
-}
-
-/* ── PROGRESS BAR (visual only) ── */
-.progress-track {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.pbar {
-  flex: 1;
-  height: 6px;
-  background: var(--surface2);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.pbar-fill {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 1s ease;
-}
-
-.pbar-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-/* ── ANIMATIONS ── */
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.fade-in.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* STAGGER */
-.fade-in:nth-child(1) { transition-delay: 0s; }
-.fade-in:nth-child(2) { transition-delay: 0.1s; }
-.fade-in:nth-child(3) { transition-delay: 0.2s; }
-.fade-in:nth-child(4) { transition-delay: 0.3s; }
-.fade-in:nth-child(5) { transition-delay: 0.4s; }
-
-/* hero text stagger */
-@keyframes heroSlide {
-  from { opacity:0; transform:translateY(24px); }
-  to { opacity:1; transform:translateY(0); }
-}
-
-.hero-eyebrow { animation: heroSlide 0.7s ease 0.1s both; }
-.hero-headline { animation: heroSlide 0.7s ease 0.2s both; }
-.hero-sub { animation: heroSlide 0.7s ease 0.35s both; }
-.stats-row { animation: heroSlide 0.7s ease 0.5s both; }
-
-/* LARGE DECORATIVE NUMBER */
-.deco-number {
-  position: absolute;
-  right: 48px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: 'Playfair Display', serif;
-  font-size: 22rem;
-  font-weight: 900;
-  color: rgba(0,0,0,0.03);
-  pointer-events: none;
-  line-height: 1;
-  user-select: none;
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .topbar { padding: 18px 24px; }
-  .hero-body { padding: 40px 24px 32px; }
-  .hero-headline { font-size: 3rem; }
-  .section { padding: 56px 24px; }
-  .deco-number { display: none; }
-  .games-grid { grid-template-columns: 1fr; }
-  footer { padding: 24px; }
-  .stats-row { gap: 20px; }
-}
-</style>
-</head>
-<body>
-
-<!-- ═══════════════════════════════════════════
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NurseCore — Study Portal</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+      :root {
+        --bg: #f8f5f0;
+        --surface: #ffffff;
+        --surface2: #f0ece5;
+        --border: #e0d8cc;
+        --text: #1c1a17;
+        --muted: #8a8070;
+        --accent: #c8441a;
+        --accent2: #2563eb;
+        --accent3: #059669;
+        --gold: #d97706;
+        --ink: #1c1a17;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* ── GRAIN TEXTURE ── */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ── HERO ── */
+      .hero {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        padding: 0 0 0 0;
+        overflow: hidden;
+      }
+
+      /* Big diagonal background accent */
+      .hero::after {
+        content: '';
+        position: absolute;
+        top: -120px;
+        right: -200px;
+        width: 700px;
+        height: 700px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(200, 68, 26, 0.06) 0%, transparent 70%);
+        pointer-events: none;
+      }
+
+      /* ── TOPBAR ── */
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px 48px;
+        border-bottom: 1px solid var(--border);
+        position: relative;
+        z-index: 10;
+      }
+
+      .wordmark {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .wordmark-main {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        font-weight: 900;
+        color: var(--text);
+        letter-spacing: -1px;
+      }
+
+      .wordmark-main span {
+        color: var(--accent);
+      }
+
+      .wordmark-sub {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.65rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .xp-counter {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        padding: 8px 18px;
+      }
+
+      .xp-flame {
+        font-size: 1rem;
+      }
+      .xp-val {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: var(--gold);
+      }
+
+      .xp-label {
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      .streak-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(217, 119, 6, 0.08);
+        border: 1px solid rgba(217, 119, 6, 0.25);
+        border-radius: 100px;
+        padding: 8px 16px;
+        font-size: 0.78rem;
+        color: var(--gold);
+        font-weight: 600;
+      }
+
+      /* ── HERO CONTENT ── */
+      .hero-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 60px 48px 40px;
+        position: relative;
+        z-index: 2;
+        max-width: 900px;
+      }
+
+      .hero-eyebrow {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .hero-eyebrow::before {
+        content: '';
+        display: block;
+        width: 32px;
+        height: 2px;
+        background: var(--accent);
+      }
+
+      .hero-headline {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(3rem, 6vw, 5.5rem);
+        font-weight: 900;
+        line-height: 0.95;
+        letter-spacing: -2px;
+        margin-bottom: 24px;
+        color: var(--text);
+      }
+
+      .hero-headline em {
+        font-style: italic;
+        color: var(--accent);
+      }
+
+      .hero-sub {
+        font-size: 1.1rem;
+        color: var(--muted);
+        max-width: 520px;
+        line-height: 1.7;
+        font-weight: 300;
+        margin-bottom: 40px;
+      }
+
+      /* STATS ROW */
+      .stats-row {
+        display: flex;
+        gap: 32px;
+        flex-wrap: wrap;
+      }
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .stat-number {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1;
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--muted);
+        font-family: 'DM Mono', monospace;
+        letter-spacing: 1px;
+      }
+
+      /* ── SCROLL CUE ── */
+      .scroll-cue {
+        padding: 20px 48px;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-family: 'DM Mono', monospace;
+        letter-spacing: 1px;
+        animation: bounce 2.5s ease-in-out infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(6px);
+        }
+      }
+
+      /* ── SECTION: ACTIVE GAMES ── */
+      .section {
+        position: relative;
+        z-index: 1;
+        padding: 80px 48px;
+      }
+
+      .section-divider {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, var(--accent) 0%, var(--border) 40%, transparent 100%);
+        margin-bottom: 48px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.4rem;
+        font-weight: 700;
+        letter-spacing: -1px;
+        line-height: 1.1;
+      }
+
+      .section-title span {
+        color: var(--accent);
+        font-style: italic;
+      }
+
+      .section-meta {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.72rem;
+        color: var(--muted);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      /* ── GAME CARDS ── */
+      .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+
+      .game-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      .game-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        border-color: transparent;
+      }
+
+      .game-card-top {
+        padding: 28px 28px 20px;
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Decorative corner accent */
+      .game-card-top::after {
+        content: '';
+        position: absolute;
+        top: -30px;
+        right: -30px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        opacity: 0.07;
+        transition: all 0.3s;
+      }
+
+      .game-card:hover .game-card-top::after {
+        transform: scale(2);
+        opacity: 0.12;
+      }
+
+      .card-tag {
+        display: inline-block;
+        font-family: 'DM Mono', monospace;
+        font-size: 0.62rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 4px;
+        margin-bottom: 16px;
+      }
+
+      .card-icon {
+        font-size: 2.8rem;
+        margin-bottom: 14px;
+        display: block;
+        transition: transform 0.3s;
+      }
+
+      .game-card:hover .card-icon {
+        transform: scale(1.1) rotate(-3deg);
+      }
+
+      .card-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        line-height: 1.2;
+      }
+
+      .card-desc {
+        font-size: 0.83rem;
+        color: var(--muted);
+        line-height: 1.6;
+        font-weight: 300;
+      }
+
+      .card-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 14px;
+      }
+
+      .feature-pill {
+        padding: 3px 10px;
+        border-radius: 100px;
+        font-size: 0.68rem;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-family: 'DM Mono', monospace;
+      }
+
+      .game-card-bottom {
+        padding: 14px 28px 18px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .card-cta {
+        font-size: 0.82rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: gap 0.2s;
+      }
+
+      .game-card:hover .card-cta {
+        gap: 10px;
+      }
+
+      .card-xp {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--gold);
+        background: rgba(217, 119, 6, 0.08);
+        border: 1px solid rgba(217, 119, 6, 0.2);
+        padding: 3px 10px;
+        border-radius: 100px;
+      }
+
+      /* CARD COLOR THEMES */
+      .card-body {
+        --card-color: #c8441a;
+      }
+      .card-body .game-card-top::after {
+        background: #c8441a;
+      }
+      .card-body .card-tag {
+        background: rgba(200, 68, 26, 0.08);
+        color: #c8441a;
+        border: 1px solid rgba(200, 68, 26, 0.2);
+      }
+      .card-body .card-cta {
+        color: #c8441a;
+      }
+
+      .card-iv {
+        --card-color: #059669;
+      }
+      .card-iv .game-card-top::after {
+        background: #059669;
+      }
+      .card-iv .card-tag {
+        background: rgba(5, 150, 105, 0.08);
+        color: #059669;
+        border: 1px solid rgba(5, 150, 105, 0.2);
+      }
+      .card-iv .card-cta {
+        color: #059669;
+      }
+
+      .card-el {
+        --card-color: #2563eb;
+      }
+      .card-el .game-card-top::after {
+        background: #2563eb;
+      }
+      .card-el .card-tag {
+        background: rgba(37, 99, 235, 0.08);
+        color: #2563eb;
+        border: 1px solid rgba(37, 99, 235, 0.2);
+      }
+      .card-el .card-cta {
+        color: #2563eb;
+      }
+
+      /* ── COMING SOON CARDS ── */
+      .coming-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px;
+      }
+
+      .coming-card {
+        background: var(--surface);
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+      }
+
+      .coming-card:hover {
+        opacity: 1;
+      }
+
+      .coming-icon {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+      }
+      .coming-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+      }
+      .coming-desc {
+        font-size: 0.75rem;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .coming-badge {
+        display: inline-block;
+        margin-top: 10px;
+        font-family: 'DM Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--muted);
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        padding: 3px 8px;
+        border-radius: 4px;
+      }
+
+      /* ── ROADMAP SECTION ── */
+      .roadmap-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+
+      .roadmap-course {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 22px;
+        transition: all 0.2s;
+      }
+
+      .roadmap-course:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+      }
+
+      .rc-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .rc-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+      }
+
+      .rc-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
+      .rc-sub {
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      .rc-topics {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .rc-topic {
+        font-size: 0.78rem;
+        color: var(--muted);
+        padding: 4px 0;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .rc-topic:last-child {
+        border-bottom: none;
+      }
+      .rc-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        position: relative;
+        z-index: 1;
+        border-top: 1px solid var(--border);
+        padding: 32px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .footer-left {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+
+      .footer-left span {
+        color: var(--accent);
+      }
+
+      .footer-right {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--muted);
+        letter-spacing: 1px;
+      }
+
+      /* ── PROGRESS BAR (visual only) ── */
+      .progress-track {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .pbar {
+        flex: 1;
+        height: 6px;
+        background: var(--surface2);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .pbar-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 1s ease;
+      }
+
+      .pbar-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.68rem;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      /* ── ANIMATIONS ── */
+      .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+
+      .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* STAGGER */
+      .fade-in:nth-child(1) {
+        transition-delay: 0s;
+      }
+      .fade-in:nth-child(2) {
+        transition-delay: 0.1s;
+      }
+      .fade-in:nth-child(3) {
+        transition-delay: 0.2s;
+      }
+      .fade-in:nth-child(4) {
+        transition-delay: 0.3s;
+      }
+      .fade-in:nth-child(5) {
+        transition-delay: 0.4s;
+      }
+
+      /* hero text stagger */
+      @keyframes heroSlide {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hero-eyebrow {
+        animation: heroSlide 0.7s ease 0.1s both;
+      }
+      .hero-headline {
+        animation: heroSlide 0.7s ease 0.2s both;
+      }
+      .hero-sub {
+        animation: heroSlide 0.7s ease 0.35s both;
+      }
+      .stats-row {
+        animation: heroSlide 0.7s ease 0.5s both;
+      }
+
+      /* LARGE DECORATIVE NUMBER */
+      .deco-number {
+        position: absolute;
+        right: 48px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-family: 'Playfair Display', serif;
+        font-size: 22rem;
+        font-weight: 900;
+        color: rgba(0, 0, 0, 0.03);
+        pointer-events: none;
+        line-height: 1;
+        user-select: none;
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
+        .topbar {
+          padding: 18px 24px;
+        }
+        .hero-body {
+          padding: 40px 24px 32px;
+        }
+        .hero-headline {
+          font-size: 3rem;
+        }
+        .section {
+          padding: 56px 24px;
+        }
+        .deco-number {
+          display: none;
+        }
+        .games-grid {
+          grid-template-columns: 1fr;
+        }
+        footer {
+          padding: 24px;
+        }
+        .stats-row {
+          gap: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ═══════════════════════════════════════════
      HERO
 ══════════════════════════════════════════════ -->
-<section class="hero">
+    <section class="hero">
+      <nav class="topbar">
+        <div class="wordmark">
+          <div class="wordmark-main">Nurse<span>Core</span></div>
+          <div class="wordmark-sub">Study Portal</div>
+        </div>
+        <div class="topbar-right">
+          <div class="streak-badge">🔥 <span id="streak-val">0</span> day streak</div>
+          <div class="xp-counter">
+            <span class="xp-flame">⚡</span>
+            <span class="xp-val" id="total-xp">0</span>
+            <span class="xp-label">total XP</span>
+          </div>
+        </div>
+      </nav>
 
-  <nav class="topbar">
-    <div class="wordmark">
-      <div class="wordmark-main">Nurse<span>Core</span></div>
-      <div class="wordmark-sub">Study Portal</div>
-    </div>
-    <div class="topbar-right">
-      <div class="streak-badge">🔥 <span id="streak-val">0</span> day streak</div>
-      <div class="xp-counter">
-        <span class="xp-flame">⚡</span>
-        <span class="xp-val" id="total-xp">0</span>
-        <span class="xp-label">total XP</span>
+      <div class="hero-body">
+        <div class="hero-eyebrow">Nursing School Study Games</div>
+        <h1 class="hero-headline">
+          Learn it.<br />
+          <em>Actually</em><br />
+          remember it.
+        </h1>
+        <p class="hero-sub">
+          Interactive games built from real nursing lecture material. Each module covers
+          homeostasis, pathophysiology, clinical application, and NCLEX-style questions — so you
+          study smarter, not longer.
+        </p>
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-number" id="games-count">3</div>
+            <div class="stat-label">Games Live</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">40+</div>
+            <div class="stat-label">Quiz Questions</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="topics-count">15+</div>
+            <div class="stat-label">Topics Covered</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">∞</div>
+            <div class="stat-label">Retries</div>
+          </div>
+        </div>
       </div>
-    </div>
-  </nav>
 
-  <div class="hero-body">
-    <div class="hero-eyebrow">Nursing School Study Games</div>
-    <h1 class="hero-headline">
-      Learn it.<br>
-      <em>Actually</em><br>
-      remember it.
-    </h1>
-    <p class="hero-sub">
-      Interactive games built from real nursing lecture material. Each module covers homeostasis, pathophysiology, clinical application, and NCLEX-style questions — so you study smarter, not longer.
-    </p>
-    <div class="stats-row">
-      <div class="stat-item">
-        <div class="stat-number" id="games-count">3</div>
-        <div class="stat-label">Games Live</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">40+</div>
-        <div class="stat-label">Quiz Questions</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" id="topics-count">15+</div>
-        <div class="stat-label">Topics Covered</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">∞</div>
-        <div class="stat-label">Retries</div>
-      </div>
-    </div>
-  </div>
+      <div class="scroll-cue">↓ &nbsp; start studying</div>
 
-  <div class="scroll-cue">↓ &nbsp; start studying</div>
+      <div class="deco-number">N</div>
+    </section>
 
-  <div class="deco-number">N</div>
-</section>
-
-
-<!-- ═══════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════
      ACTIVE GAMES
 ══════════════════════════════════════════════ -->
-<section class="section">
-  <div class="section-divider"></div>
-  <div class="section-header">
-    <h2 class="section-title">Active <span>Games</span></h2>
-    <div class="section-meta">3 modules available now</div>
-  </div>
-
-  <div class="games-grid">
-
-    <!-- GAME 1: BODY SYSTEMS -->
-    <a href="games/body-systems.html" class="game-card card-body fade-in">
-      <div class="game-card-top">
-        <div class="card-tag">Core Nursing · N112</div>
-        <span class="card-icon">🫀</span>
-        <div class="card-title">Body Systems & Homeostasis</div>
-        <p class="card-desc">Explore the human body interactively. Click any organ system to see normal homeostasis, then select a disease to watch how it disrupts the balance.</p>
-        <div class="card-features">
-          <span class="feature-pill">Body Explorer</span>
-          <span class="feature-pill">7 Systems</span>
-          <span class="feature-pill">18 Diseases</span>
-          <span class="feature-pill">Quiz Mode</span>
-        </div>
+    <section class="section">
+      <div class="section-divider"></div>
+      <div class="section-header">
+        <h2 class="section-title">Active <span>Games</span></h2>
+        <div class="section-meta">3 modules available now</div>
       </div>
-      <div class="game-card-bottom">
-        <div class="card-cta">Play now →</div>
-        <div class="card-xp">Up to 200 XP</div>
-      </div>
-    </a>
 
-    <!-- GAME 2: IV FLUIDS -->
-    <a href="games/iv-fluids.html" class="game-card card-iv fade-in">
-      <div class="game-card-top">
-        <div class="card-tag">Fluid Balance · N112</div>
-        <span class="card-icon">💉</span>
-        <div class="card-title">IV Fluid Mastery</div>
-        <p class="card-desc">Master tonicity, indications, and nursing cautions for every major IV fluid. See how each solution affects cells at the molecular level.</p>
-        <div class="card-features">
-          <span class="feature-pill">10 Fluids</span>
-          <span class="feature-pill">Cell Visualizer</span>
-          <span class="feature-pill">Matching Game</span>
-          <span class="feature-pill">12 Questions</span>
-        </div>
-      </div>
-      <div class="game-card-bottom">
-        <div class="card-cta">Play now →</div>
-        <div class="card-xp">Up to 180 XP</div>
-      </div>
-    </a>
+      <div class="games-grid">
+        <!-- GAME 1: BODY SYSTEMS -->
+        <a href="games/body_systems.html" class="game-card card-body fade-in">
+          <div class="game-card-top">
+            <div class="card-tag">Core Nursing · N112</div>
+            <span class="card-icon">🫀</span>
+            <div class="card-title">Body Systems & Homeostasis</div>
+            <p class="card-desc">
+              Explore the human body interactively. Click any organ system to see normal
+              homeostasis, then select a disease to watch how it disrupts the balance.
+            </p>
+            <div class="card-features">
+              <span class="feature-pill">Body Explorer</span>
+              <span class="feature-pill">7 Systems</span>
+              <span class="feature-pill">18 Diseases</span>
+              <span class="feature-pill">Quiz Mode</span>
+            </div>
+          </div>
+          <div class="game-card-bottom">
+            <div class="card-cta">Play now →</div>
+            <div class="card-xp">Up to 200 XP</div>
+          </div>
+        </a>
 
-    <!-- GAME 3: ELECTROLYTES -->
-    <a href="games/electrolytes.html" class="game-card card-el fade-in">
-      <div class="game-card-top">
-        <div class="card-tag">Electrolytes · N112</div>
-        <span class="card-icon">⚡</span>
-        <div class="card-title">Electrolyte Imbalances</div>
-        <p class="card-desc">Na, K, Ca, Mg — learn every hyper and hypo state, causes, symptoms (including EKG changes), and stepped treatments from mild to severe.</p>
-        <div class="card-features">
-          <span class="feature-pill">4 Electrolytes</span>
-          <span class="feature-pill">Symptom Sorter</span>
-          <span class="feature-pill">EKG Changes</span>
-          <span class="feature-pill">12 Questions</span>
-        </div>
+        <!-- GAME 2: IV FLUIDS -->
+        <a href="games/iv_fluids.html" class="game-card card-iv fade-in">
+          <div class="game-card-top">
+            <div class="card-tag">Fluid Balance · N112</div>
+            <span class="card-icon">💉</span>
+            <div class="card-title">IV Fluid Mastery</div>
+            <p class="card-desc">
+              Master tonicity, indications, and nursing cautions for every major IV fluid. See how
+              each solution affects cells at the molecular level.
+            </p>
+            <div class="card-features">
+              <span class="feature-pill">10 Fluids</span>
+              <span class="feature-pill">Cell Visualizer</span>
+              <span class="feature-pill">Matching Game</span>
+              <span class="feature-pill">12 Questions</span>
+            </div>
+          </div>
+          <div class="game-card-bottom">
+            <div class="card-cta">Play now →</div>
+            <div class="card-xp">Up to 180 XP</div>
+          </div>
+        </a>
+
+        <!-- GAME 3: ELECTROLYTES -->
+        <a href="games/electrolytes.html" class="game-card card-el fade-in">
+          <div class="game-card-top">
+            <div class="card-tag">Electrolytes · N112</div>
+            <span class="card-icon">⚡</span>
+            <div class="card-title">Electrolyte Imbalances</div>
+            <p class="card-desc">
+              Na, K, Ca, Mg — learn every hyper and hypo state, causes, symptoms (including EKG
+              changes), and stepped treatments from mild to severe.
+            </p>
+            <div class="card-features">
+              <span class="feature-pill">4 Electrolytes</span>
+              <span class="feature-pill">Symptom Sorter</span>
+              <span class="feature-pill">EKG Changes</span>
+              <span class="feature-pill">12 Questions</span>
+            </div>
+          </div>
+          <div class="game-card-bottom">
+            <div class="card-cta">Play now →</div>
+            <div class="card-xp">Up to 200 XP</div>
+          </div>
+        </a>
       </div>
-      <div class="game-card-bottom">
-        <div class="card-cta">Play now →</div>
-        <div class="card-xp">Up to 200 XP</div>
-      </div>
-    </a>
+    </section>
 
-  </div>
-</section>
-
-
-<!-- ═══════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════
      COMING SOON — NURSING
 ══════════════════════════════════════════════ -->
-<section class="section" style="padding-top:0">
-  <div class="section-header">
-    <h2 class="section-title">Coming <span>Soon</span></h2>
-    <div class="section-meta">Nursing core curriculum</div>
-  </div>
+    <section class="section" style="padding-top: 0">
+      <div class="section-header">
+        <h2 class="section-title">Coming <span>Soon</span></h2>
+        <div class="section-meta">Nursing core curriculum</div>
+      </div>
 
-  <div class="coming-grid">
-    <div class="coming-card fade-in">
-      <div class="coming-icon">🫧</div>
-      <div class="coming-title">Acid-Base Balance</div>
-      <div class="coming-desc">ABG interpretation, respiratory vs. metabolic, compensation — the topic students struggle with most.</div>
-      <span class="coming-badge">In development</span>
-    </div>
-    <div class="coming-card fade-in">
-      <div class="coming-icon">📈</div>
-      <div class="coming-title">EKG Rhythms</div>
-      <div class="coming-desc">Normal sinus rhythm to life-threatening dysrhythmias. Identify and classify strips with instant feedback.</div>
-      <span class="coming-badge">Planned</span>
-    </div>
-    <div class="coming-card fade-in">
-      <div class="coming-icon">💊</div>
-      <div class="coming-title">Pharmacology</div>
-      <div class="coming-desc">Drug classes, mechanisms of action, side effects, and nursing considerations for high-priority medications.</div>
-      <span class="coming-badge">Planned</span>
-    </div>
-    <div class="coming-card fade-in">
-      <div class="coming-icon">🧮</div>
-      <div class="coming-title">Dosage Calculations</div>
-      <div class="coming-desc">Drip rates, weight-based dosing, unit conversions. Timed practice mode for NCLEX readiness.</div>
-      <span class="coming-badge">Planned</span>
-    </div>
-    <div class="coming-card fade-in">
-      <div class="coming-icon">🩸</div>
-      <div class="coming-title">Lab Values</div>
-      <div class="coming-desc">Critical lab ranges, what deviations mean clinically, and how to act on abnormal results.</div>
-      <span class="coming-badge">Planned</span>
-    </div>
-    <div class="coming-card fade-in">
-      <div class="coming-icon">🏥</div>
-      <div class="coming-title">Priority Nursing</div>
-      <div class="coming-desc">Which patient do you see first? SBAR, Maslow's, ABCs, and NCLEX-style delegation scenarios.</div>
-      <span class="coming-badge">Planned</span>
-    </div>
-    <div class="coming-card fade-in">
-      <div class="coming-icon">🔥</div>
-      <div class="coming-title">Burns & Trauma</div>
-      <div class="coming-desc">Rule of nines, fluid resuscitation formulas, wound classification, and shock management.</div>
-      <span class="coming-badge">Planned</span>
-    </div>
-    <div class="coming-card fade-in">
-      <div class="coming-icon">🧠</div>
-      <div class="coming-title">Neurological Emergencies</div>
-      <div class="coming-desc">Stroke recognition, ICP management, GCS scoring, and herniation syndromes.</div>
-      <span class="coming-badge">Planned</span>
-    </div>
-  </div>
-</section>
+      <div class="coming-grid">
+        <div class="coming-card fade-in">
+          <div class="coming-icon">🫧</div>
+          <div class="coming-title">Acid-Base Balance</div>
+          <div class="coming-desc">
+            ABG interpretation, respiratory vs. metabolic, compensation — the topic students
+            struggle with most.
+          </div>
+          <span class="coming-badge">In development</span>
+        </div>
+        <div class="coming-card fade-in">
+          <div class="coming-icon">📈</div>
+          <div class="coming-title">EKG Rhythms</div>
+          <div class="coming-desc">
+            Normal sinus rhythm to life-threatening dysrhythmias. Identify and classify strips with
+            instant feedback.
+          </div>
+          <span class="coming-badge">Planned</span>
+        </div>
+        <div class="coming-card fade-in">
+          <div class="coming-icon">💊</div>
+          <div class="coming-title">Pharmacology</div>
+          <div class="coming-desc">
+            Drug classes, mechanisms of action, side effects, and nursing considerations for
+            high-priority medications.
+          </div>
+          <span class="coming-badge">Planned</span>
+        </div>
+        <div class="coming-card fade-in">
+          <div class="coming-icon">🧮</div>
+          <div class="coming-title">Dosage Calculations</div>
+          <div class="coming-desc">
+            Drip rates, weight-based dosing, unit conversions. Timed practice mode for NCLEX
+            readiness.
+          </div>
+          <span class="coming-badge">Planned</span>
+        </div>
+        <div class="coming-card fade-in">
+          <div class="coming-icon">🩸</div>
+          <div class="coming-title">Lab Values</div>
+          <div class="coming-desc">
+            Critical lab ranges, what deviations mean clinically, and how to act on abnormal
+            results.
+          </div>
+          <span class="coming-badge">Planned</span>
+        </div>
+        <div class="coming-card fade-in">
+          <div class="coming-icon">🏥</div>
+          <div class="coming-title">Priority Nursing</div>
+          <div class="coming-desc">
+            Which patient do you see first? SBAR, Maslow's, ABCs, and NCLEX-style delegation
+            scenarios.
+          </div>
+          <span class="coming-badge">Planned</span>
+        </div>
+        <div class="coming-card fade-in">
+          <div class="coming-icon">🔥</div>
+          <div class="coming-title">Burns & Trauma</div>
+          <div class="coming-desc">
+            Rule of nines, fluid resuscitation formulas, wound classification, and shock management.
+          </div>
+          <span class="coming-badge">Planned</span>
+        </div>
+        <div class="coming-card fade-in">
+          <div class="coming-icon">🧠</div>
+          <div class="coming-title">Neurological Emergencies</div>
+          <div class="coming-desc">
+            Stroke recognition, ICP management, GCS scoring, and herniation syndromes.
+          </div>
+          <span class="coming-badge">Planned</span>
+        </div>
+      </div>
+    </section>
 
-
-<!-- ═══════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════
      ROADMAP — FUTURE COURSES
 ══════════════════════════════════════════════ -->
-<section class="section" style="background: var(--surface2); padding-top: 64px; padding-bottom: 64px;">
-  <div class="section-header">
-    <div>
-      <h2 class="section-title">Future <span>Portals</span></h2>
-      <p style="color:var(--muted);font-size:0.9rem;margin-top:6px;font-weight:300">Separate study portals planned for prerequisite courses</p>
-    </div>
-    <div class="section-meta">Long-term roadmap</div>
-  </div>
-
-  <div class="roadmap-grid">
-
-    <div class="roadmap-course fade-in">
-      <div class="rc-header">
-        <div class="rc-icon" style="background:rgba(239,68,68,0.08)">🔬</div>
+    <section
+      class="section"
+      style="background: var(--surface2); padding-top: 64px; padding-bottom: 64px"
+    >
+      <div class="section-header">
         <div>
-          <div class="rc-name">Anatomy & Physiology</div>
-          <div class="rc-sub">A&P I & II</div>
+          <h2 class="section-title">Future <span>Portals</span></h2>
+          <p style="color: var(--muted); font-size: 0.9rem; margin-top: 6px; font-weight: 300">
+            Separate study portals planned for prerequisite courses
+          </p>
+        </div>
+        <div class="section-meta">Long-term roadmap</div>
+      </div>
+
+      <div class="roadmap-grid">
+        <div class="roadmap-course fade-in">
+          <div class="rc-header">
+            <div class="rc-icon" style="background: rgba(239, 68, 68, 0.08)">🔬</div>
+            <div>
+              <div class="rc-name">Anatomy & Physiology</div>
+              <div class="rc-sub">A&P I & II</div>
+            </div>
+          </div>
+          <div class="rc-topics">
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #ef4444"></div>
+              Cell biology & membranes
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #ef4444"></div>
+              Skeletal & muscular systems
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #ef4444"></div>
+              Nervous system & special senses
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #ef4444"></div>
+              Endocrine & reproductive
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #ef4444"></div>
+              Cardiovascular & respiratory
+            </div>
+          </div>
+        </div>
+
+        <div class="roadmap-course fade-in">
+          <div class="rc-header">
+            <div class="rc-icon" style="background: rgba(16, 185, 129, 0.08)">🧫</div>
+            <div>
+              <div class="rc-name">Microbiology</div>
+              <div class="rc-sub">Micro for Health Sciences</div>
+            </div>
+          </div>
+          <div class="rc-topics">
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #10b981"></div>
+              Bacterial vs. viral vs. fungal
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #10b981"></div>
+              Infection chain & transmission
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #10b981"></div>
+              Immune response basics
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #10b981"></div>
+              Antimicrobial resistance
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #10b981"></div>
+              Hospital-acquired infections
+            </div>
+          </div>
+        </div>
+
+        <div class="roadmap-course fade-in">
+          <div class="rc-header">
+            <div class="rc-icon" style="background: rgba(37, 99, 235, 0.08)">⚗️</div>
+            <div>
+              <div class="rc-name">Chemistry</div>
+              <div class="rc-sub">General & Organic Chem</div>
+            </div>
+          </div>
+          <div class="rc-topics">
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #2563eb"></div>
+              Atomic structure & bonding
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #2563eb"></div>
+              Acids, bases & pH
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #2563eb"></div>
+              Solutions & concentrations
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #2563eb"></div>
+              Organic molecules & reactions
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #2563eb"></div>
+              Biochemistry basics
+            </div>
+          </div>
+        </div>
+
+        <div class="roadmap-course fade-in">
+          <div class="rc-header">
+            <div class="rc-icon" style="background: rgba(217, 119, 6, 0.08)">📐</div>
+            <div>
+              <div class="rc-name">Statistics</div>
+              <div class="rc-sub">Healthcare Statistics</div>
+            </div>
+          </div>
+          <div class="rc-topics">
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #d97706"></div>
+              Descriptive statistics
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #d97706"></div>
+              Reading research studies
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #d97706"></div>
+              Sensitivity vs. specificity
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #d97706"></div>
+              Evidence-based practice
+            </div>
+            <div class="rc-topic">
+              <div class="rc-dot" style="background: #d97706"></div>
+              Clinical trial types
+            </div>
+          </div>
         </div>
       </div>
-      <div class="rc-topics">
-        <div class="rc-topic"><div class="rc-dot" style="background:#ef4444"></div>Cell biology & membranes</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#ef4444"></div>Skeletal & muscular systems</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#ef4444"></div>Nervous system & special senses</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#ef4444"></div>Endocrine & reproductive</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#ef4444"></div>Cardiovascular & respiratory</div>
-      </div>
-    </div>
+    </section>
 
-    <div class="roadmap-course fade-in">
-      <div class="rc-header">
-        <div class="rc-icon" style="background:rgba(16,185,129,0.08)">🧫</div>
-        <div>
-          <div class="rc-name">Microbiology</div>
-          <div class="rc-sub">Micro for Health Sciences</div>
-        </div>
-      </div>
-      <div class="rc-topics">
-        <div class="rc-topic"><div class="rc-dot" style="background:#10b981"></div>Bacterial vs. viral vs. fungal</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#10b981"></div>Infection chain & transmission</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#10b981"></div>Immune response basics</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#10b981"></div>Antimicrobial resistance</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#10b981"></div>Hospital-acquired infections</div>
-      </div>
-    </div>
-
-    <div class="roadmap-course fade-in">
-      <div class="rc-header">
-        <div class="rc-icon" style="background:rgba(37,99,235,0.08)">⚗️</div>
-        <div>
-          <div class="rc-name">Chemistry</div>
-          <div class="rc-sub">General & Organic Chem</div>
-        </div>
-      </div>
-      <div class="rc-topics">
-        <div class="rc-topic"><div class="rc-dot" style="background:#2563eb"></div>Atomic structure & bonding</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#2563eb"></div>Acids, bases & pH</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#2563eb"></div>Solutions & concentrations</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#2563eb"></div>Organic molecules & reactions</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#2563eb"></div>Biochemistry basics</div>
-      </div>
-    </div>
-
-    <div class="roadmap-course fade-in">
-      <div class="rc-header">
-        <div class="rc-icon" style="background:rgba(217,119,6,0.08)">📐</div>
-        <div>
-          <div class="rc-name">Statistics</div>
-          <div class="rc-sub">Healthcare Statistics</div>
-        </div>
-      </div>
-      <div class="rc-topics">
-        <div class="rc-topic"><div class="rc-dot" style="background:#d97706"></div>Descriptive statistics</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#d97706"></div>Reading research studies</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#d97706"></div>Sensitivity vs. specificity</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#d97706"></div>Evidence-based practice</div>
-        <div class="rc-topic"><div class="rc-dot" style="background:#d97706"></div>Clinical trial types</div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-
-<!-- ═══════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════
      STUDY TIPS STRIP
 ══════════════════════════════════════════════ -->
-<section class="section" style="padding-top:64px;padding-bottom:64px">
-  <div style="background:var(--ink);border-radius:20px;padding:48px;color:#fff;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;">
-    <div>
-      <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:3px;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:12px">How to use this portal</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1.2;margin-bottom:16px">Study smarter,<br><em style="color:#f59e0b">not longer.</em></h3>
-      <p style="font-size:0.88rem;color:rgba(255,255,255,0.6);line-height:1.8;font-weight:300">These games are built around active recall — the single most evidence-backed study technique. Each quiz question is written to match the reasoning style of NCLEX, not just memorization.</p>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:16px">
-      <div style="display:flex;gap:14px;align-items:flex-start">
-        <div style="width:32px;height:32px;border-radius:8px;background:rgba(200,68,26,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem">1</div>
+    <section class="section" style="padding-top: 64px; padding-bottom: 64px">
+      <div
+        style="
+          background: var(--ink);
+          border-radius: 20px;
+          padding: 48px;
+          color: #fff;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 48px;
+          align-items: center;
+        "
+      >
         <div>
-          <div style="font-weight:600;font-size:0.88rem;margin-bottom:3px">Explore first</div>
-          <div style="font-size:0.78rem;color:rgba(255,255,255,0.5);line-height:1.5">Click through the explorer to build context before quizzing yourself</div>
+          <div
+            style="
+              font-family: 'DM Mono', monospace;
+              font-size: 0.65rem;
+              letter-spacing: 3px;
+              color: rgba(255, 255, 255, 0.4);
+              text-transform: uppercase;
+              margin-bottom: 12px;
+            "
+          >
+            How to use this portal
+          </div>
+          <h3
+            style="
+              font-family: 'Playfair Display', serif;
+              font-size: 1.8rem;
+              font-weight: 700;
+              line-height: 1.2;
+              margin-bottom: 16px;
+            "
+          >
+            Study smarter,<br /><em style="color: #f59e0b">not longer.</em>
+          </h3>
+          <p
+            style="
+              font-size: 0.88rem;
+              color: rgba(255, 255, 255, 0.6);
+              line-height: 1.8;
+              font-weight: 300;
+            "
+          >
+            These games are built around active recall — the single most evidence-backed study
+            technique. Each quiz question is written to match the reasoning style of NCLEX, not just
+            memorization.
+          </p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 16px">
+          <div style="display: flex; gap: 14px; align-items: flex-start">
+            <div
+              style="
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+                background: rgba(200, 68, 26, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                font-size: 1rem;
+              "
+            >
+              1
+            </div>
+            <div>
+              <div style="font-weight: 600; font-size: 0.88rem; margin-bottom: 3px">
+                Explore first
+              </div>
+              <div style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.5); line-height: 1.5">
+                Click through the explorer to build context before quizzing yourself
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: flex-start">
+            <div
+              style="
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+                background: rgba(5, 150, 105, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                font-size: 1rem;
+              "
+            >
+              2
+            </div>
+            <div>
+              <div style="font-weight: 600; font-size: 0.88rem; margin-bottom: 3px">
+                Quiz without looking
+              </div>
+              <div style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.5); line-height: 1.5">
+                Cover the reference material. Wrong answers hurt more, but teach more
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: flex-start">
+            <div
+              style="
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+                background: rgba(37, 99, 235, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                font-size: 1rem;
+              "
+            >
+              3
+            </div>
+            <div>
+              <div style="font-weight: 600; font-size: 0.88rem; margin-bottom: 3px">
+                Come back tomorrow
+              </div>
+              <div style="font-size: 0.78rem; color: rgba(255, 255, 255, 0.5); line-height: 1.5">
+                Spaced repetition. 20 minutes daily beats 3-hour cramming sessions every time
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div style="display:flex;gap:14px;align-items:flex-start">
-        <div style="width:32px;height:32px;border-radius:8px;background:rgba(5,150,105,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem">2</div>
-        <div>
-          <div style="font-weight:600;font-size:0.88rem;margin-bottom:3px">Quiz without looking</div>
-          <div style="font-size:0.78rem;color:rgba(255,255,255,0.5);line-height:1.5">Cover the reference material. Wrong answers hurt more, but teach more</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:14px;align-items:flex-start">
-        <div style="width:32px;height:32px;border-radius:8px;background:rgba(37,99,235,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem">3</div>
-        <div>
-          <div style="font-weight:600;font-size:0.88rem;margin-bottom:3px">Come back tomorrow</div>
-          <div style="font-size:0.78rem;color:rgba(255,255,255,0.5);line-height:1.5">Spaced repetition. 20 minutes daily beats 3-hour cramming sessions every time</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-
-<!-- ═══════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════
      FOOTER
 ══════════════════════════════════════════════ -->
-<footer>
-  <div class="footer-left">Nurse<span>Core</span></div>
-  <div class="footer-right">Built for nursing students · HTML / CSS / JS · Open source on GitHub</div>
-</footer>
+    <footer>
+      <div class="footer-left">Nurse<span>Core</span></div>
+      <div class="footer-right">
+        Built for nursing students · HTML / CSS / JS · Open source on GitHub
+      </div>
+    </footer>
 
+    <script>
+      // ── INTERSECTION OBSERVER for fade-ins ──
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
 
-<script>
-// ── INTERSECTION OBSERVER for fade-ins ──
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.1 });
+      document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
 
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+      // ── XP & STREAK (persisted in localStorage) ──
+      function loadStats() {
+        const xp = localStorage.getItem('nursecore_xp') || 0;
+        const streak = localStorage.getItem('nursecore_streak') || 0;
+        document.getElementById('total-xp').textContent = parseInt(xp).toLocaleString();
+        document.getElementById('streak-val').textContent = streak;
+      }
 
-// ── XP & STREAK (persisted in localStorage) ──
-function loadStats() {
-  const xp = localStorage.getItem('nursecore_xp') || 0;
-  const streak = localStorage.getItem('nursecore_streak') || 0;
-  document.getElementById('total-xp').textContent = parseInt(xp).toLocaleString();
-  document.getElementById('streak-val').textContent = streak;
-}
+      loadStats();
 
-loadStats();
-
-// ── SMOOTH SCROLL CUE ──
-document.querySelector('.scroll-cue').addEventListener('click', () => {
-  document.querySelector('.section').scrollIntoView({ behavior: 'smooth' });
-});
-</script>
-</body>
+      // ── SMOOTH SCROLL CUE ──
+      document.querySelector('.scroll-cue').addEventListener('click', () => {
+        document.querySelector('.section').scrollIntoView({ behavior: 'smooth' });
+      });
+    </script>
+  </body>
 </html>
