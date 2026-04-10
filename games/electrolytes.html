@@ -1,794 +1,1322 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Electrolyte Mastery</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Anybody:wght@300;400;600;800&family=JetBrains+Mono:wght@300;400;600&display=swap');
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudyPRN - Electrolyte Imbalances</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Anybody:wght@300;400;600;800&family=JetBrains+Mono:wght@300;400;600&display=swap');
 
-:root {
-  --bg: #0d0f14;
-  --surface: #151821;
-  --surface2: #1c2030;
-  --border: #262d42;
-  --text: #e8eaf2;
-  --muted: #6b7394;
-  --na: #3b82f6;
-  --k: #8b5cf6;
-  --ca: #10b981;
-  --mg: #f59e0b;
-  --phos: #ef4444;
-  --hyper: #ff6b6b;
-  --hypo: #74c0fc;
-}
+      :root {
+        --bg: #0d0f14;
+        --surface: #151821;
+        --surface2: #1c2030;
+        --border: #262d42;
+        --text: #e8eaf2;
+        --muted: #6b7394;
+        --na: #3b82f6;
+        --k: #8b5cf6;
+        --ca: #10b981;
+        --mg: #f59e0b;
+        --phos: #ef4444;
+        --hyper: #ff6b6b;
+        --hypo: #74c0fc;
+      }
 
-* { margin:0; padding:0; box-sizing:border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Anybody', sans-serif;
-  min-height: 100vh;
-}
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Anybody', sans-serif;
+        min-height: 100vh;
+      }
 
-/* SCANLINE EFFECT */
-body::after {
-  content:'';
-  position:fixed;
-  inset:0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-  pointer-events:none;
-  z-index:0;
-}
+      /* SCANLINE EFFECT */
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.03) 2px,
+          rgba(0, 0, 0, 0.03) 4px
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
 
-/* HEADER */
-header {
-  padding: 14px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-  z-index: 10;
-  background: rgba(13,15,20,0.95);
-  backdrop-filter: blur(8px);
-}
+      /* HEADER */
+      header {
+        padding: 14px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border);
+        position: relative;
+        z-index: 10;
+        background: rgba(13, 15, 20, 0.95);
+        backdrop-filter: blur(8px);
+      }
 
-.logo-el {
-  font-size: 1.4rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
+      .logo-el {
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+      }
 
-.logo-el .sym { 
-  display: inline-block; 
-  padding: 2px 10px; 
-  border: 2px solid;
-  border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.1rem;
-  margin-right: 8px;
-}
+      .logo-el .sym {
+        display: inline-block;
+        padding: 2px 10px;
+        border: 2px solid;
+        border-radius: 4px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.1rem;
+        margin-right: 8px;
+      }
 
-.sym-na { border-color: var(--na); color: var(--na); }
-.sym-k  { border-color: var(--k);  color: var(--k);  }
-.sym-ca { border-color: var(--ca); color: var(--ca); }
-.sym-mg { border-color: var(--mg); color: var(--mg); }
+      .sym-na {
+        border-color: var(--na);
+        color: var(--na);
+      }
+      .sym-k {
+        border-color: var(--k);
+        color: var(--k);
+      }
+      .sym-ca {
+        border-color: var(--ca);
+        color: var(--ca);
+      }
+      .sym-mg {
+        border-color: var(--mg);
+        color: var(--mg);
+      }
 
-.nav-row { display: flex; gap: 4px; }
+      .nav-row {
+        display: flex;
+        gap: 4px;
+      }
 
-.nav-btn {
-  padding: 8px 16px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--muted);
-  font-family: 'Anybody', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.5px;
-}
-.nav-btn:hover { border-color: var(--text); color: var(--text); }
-.nav-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+      .nav-btn {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: transparent;
+        color: var(--muted);
+        font-family: 'Anybody', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        letter-spacing: 0.5px;
+      }
+      .nav-btn:hover {
+        border-color: var(--text);
+        color: var(--text);
+      }
+      .nav-btn.active {
+        background: var(--text);
+        color: var(--bg);
+        border-color: var(--text);
+      }
 
-.xp-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  color: var(--mg);
-  border: 1px solid rgba(245,158,11,0.3);
-  padding: 6px 14px;
-  border-radius: 4px;
-  background: rgba(245,158,11,0.05);
-}
+      .xp-tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--mg);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        padding: 6px 14px;
+        border-radius: 4px;
+        background: rgba(245, 158, 11, 0.05);
+      }
 
-/* MAIN */
-.main { position: relative; z-index: 1; }
-.view { display: none; }
-.view.active { display: block; }
+      /* MAIN */
+      .main {
+        position: relative;
+        z-index: 1;
+      }
+      .view {
+        display: none;
+      }
+      .view.active {
+        display: block;
+      }
 
-/* ============================================
+      /* ============================================
    PERIODIC TABLE ENTRY CARDS
    ============================================ */
-#explore-view { padding: 28px 32px; }
+      #explore-view {
+        padding: 28px 32px;
+      }
 
-.pt-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  max-width: 900px;
-  margin: 0 auto 32px;
-}
+      .pt-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        max-width: 900px;
+        margin: 0 auto 32px;
+      }
 
-.pt-element {
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  padding: 18px;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: var(--surface);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 6px;
-}
+      .pt-element {
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        padding: 18px;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: var(--surface);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 6px;
+      }
 
-.pt-element:hover { transform: translateY(-3px); }
+      .pt-element:hover {
+        transform: translateY(-3px);
+      }
 
-.el-number { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); }
-.el-symbol { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 600; }
-.el-name { font-size: 0.8rem; font-weight: 600; }
-.el-normal { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+      .el-number {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--muted);
+      }
+      .el-symbol {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 2.2rem;
+        font-weight: 600;
+      }
+      .el-name {
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      .el-normal {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--muted);
+      }
 
-/* DETAIL SECTION */
-.el-detail-area {
-  max-width: 900px;
-  margin: 0 auto;
-}
+      /* DETAIL SECTION */
+      .el-detail-area {
+        max-width: 900px;
+        margin: 0 auto;
+      }
 
-.el-detail-placeholder {
-  text-align: center;
-  padding: 48px;
-  color: var(--muted);
-  border: 1px dashed var(--border);
-  border-radius: 12px;
-}
-.el-detail-placeholder .big { font-size: 3rem; margin-bottom: 12px; }
+      .el-detail-placeholder {
+        text-align: center;
+        padding: 48px;
+        color: var(--muted);
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+      }
+      .el-detail-placeholder .big {
+        font-size: 3rem;
+        margin-bottom: 12px;
+      }
 
-.hyper-hypo-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
-}
+      .hyper-hypo-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
 
-.imbalance-card {
-  border-radius: 12px;
-  padding: 22px;
-  border: 1px solid;
-}
+      .imbalance-card {
+        border-radius: 12px;
+        padding: 22px;
+        border: 1px solid;
+      }
 
-.imbalance-card.hyper-card {
-  background: rgba(255,107,107,0.05);
-  border-color: rgba(255,107,107,0.3);
-}
+      .imbalance-card.hyper-card {
+        background: rgba(255, 107, 107, 0.05);
+        border-color: rgba(255, 107, 107, 0.3);
+      }
 
-.imbalance-card.hypo-card {
-  background: rgba(116,192,252,0.05);
-  border-color: rgba(116,192,252,0.3);
-}
+      .imbalance-card.hypo-card {
+        background: rgba(116, 192, 252, 0.05);
+        border-color: rgba(116, 192, 252, 0.3);
+      }
 
-.ic-title {
-  font-size: 1.1rem;
-  font-weight: 800;
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+      .ic-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-.ic-hyper-title { color: var(--hyper); }
-.ic-hypo-title { color: var(--hypo); }
+      .ic-hyper-title {
+        color: var(--hyper);
+      }
+      .ic-hypo-title {
+        color: var(--hypo);
+      }
 
-.ic-section {
-  margin-bottom: 12px;
-}
+      .ic-section {
+        margin-bottom: 12px;
+      }
 
-.ic-section-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
+      .ic-section-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
 
-.ic-hyper .ic-section-label { color: rgba(255,107,107,0.7); }
-.ic-hypo .ic-section-label { color: rgba(116,192,252,0.7); }
+      .ic-hyper .ic-section-label {
+        color: rgba(255, 107, 107, 0.7);
+      }
+      .ic-hypo .ic-section-label {
+        color: rgba(116, 192, 252, 0.7);
+      }
 
-.cause-tag {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  margin: 2px;
-}
+      .cause-tag {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin: 2px;
+      }
 
-.cause-tag-hyper { background: rgba(255,107,107,0.1); color: #ffa5a5; border: 1px solid rgba(255,107,107,0.2); }
-.cause-tag-hypo { background: rgba(116,192,252,0.1); color: #a5d3fc; border: 1px solid rgba(116,192,252,0.2); }
+      .cause-tag-hyper {
+        background: rgba(255, 107, 107, 0.1);
+        color: #ffa5a5;
+        border: 1px solid rgba(255, 107, 107, 0.2);
+      }
+      .cause-tag-hypo {
+        background: rgba(116, 192, 252, 0.1);
+        color: #a5d3fc;
+        border: 1px solid rgba(116, 192, 252, 0.2);
+      }
 
-.symptom-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 5px 0;
-  font-size: 0.82rem;
-  line-height: 1.4;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
+      .symptom-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 5px 0;
+        font-size: 0.82rem;
+        line-height: 1.4;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
 
-.s-icon { flex-shrink: 0; font-size: 0.9rem; }
+      .s-icon {
+        flex-shrink: 0;
+        font-size: 0.9rem;
+      }
 
-.tx-item {
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  margin-bottom: 4px;
-}
+      .tx-item {
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+      }
 
-.tx-mild { background: rgba(116,192,252,0.08); border-left: 3px solid #74c0fc; }
-.tx-moderate { background: rgba(245,158,11,0.08); border-left: 3px solid #f59e0b; }
-.tx-severe { background: rgba(255,107,107,0.08); border-left: 3px solid #ff6b6b; }
+      .tx-mild {
+        background: rgba(116, 192, 252, 0.08);
+        border-left: 3px solid #74c0fc;
+      }
+      .tx-moderate {
+        background: rgba(245, 158, 11, 0.08);
+        border-left: 3px solid #f59e0b;
+      }
+      .tx-severe {
+        background: rgba(255, 107, 107, 0.08);
+        border-left: 3px solid #ff6b6b;
+      }
 
-/* EKG BADGE */
-.ekg-badge {
-  background: rgba(245,158,11,0.08);
-  border: 1px solid rgba(245,158,11,0.3);
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.8rem;
-  color: #fbbf24;
-  font-family: 'JetBrains Mono', monospace;
-  margin-top: 8px;
-}
+      /* EKG BADGE */
+      .ekg-badge {
+        background: rgba(245, 158, 11, 0.08);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.8rem;
+        color: #fbbf24;
+        font-family: 'JetBrains Mono', monospace;
+        margin-top: 8px;
+      }
 
-/* ============================================
+      /* ============================================
    SYMPTOM SORTER
    ============================================ */
-#sort-view { padding: 28px 32px; }
+      #sort-view {
+        padding: 28px 32px;
+      }
 
-.sorter-header { text-align: center; margin-bottom: 28px; }
-.sorter-header h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; }
-.sorter-header p { color: var(--muted); }
+      .sorter-header {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+      .sorter-header h2 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+      .sorter-header p {
+        color: var(--muted);
+      }
 
-.sorter-layout {
-  max-width: 920px;
-  margin: 0 auto;
-}
+      .sorter-layout {
+        max-width: 920px;
+        margin: 0 auto;
+      }
 
-.symptom-pool {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  min-height: 80px;
-  padding: 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  margin-bottom: 24px;
-}
+      .symptom-pool {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        min-height: 80px;
+        padding: 16px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        margin-bottom: 24px;
+      }
 
-.sym-card {
-  padding: 9px 16px;
-  border-radius: 8px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  font-size: 0.82rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  user-select: none;
-}
+      .sym-card {
+        padding: 9px 16px;
+        border-radius: 8px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        font-size: 0.82rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        user-select: none;
+      }
 
-.sym-card:hover { border-color: var(--mg); color: var(--mg); }
-.sym-card.placed { opacity: 0.4; pointer-events: none; }
-.sym-card.wrong-anim { animation: symShake 0.3s; border-color: var(--hyper); }
+      .sym-card:hover {
+        border-color: var(--mg);
+        color: var(--mg);
+      }
+      .sym-card.placed {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      .sym-card.wrong-anim {
+        animation: symShake 0.3s;
+        border-color: var(--hyper);
+      }
 
-@keyframes symShake {
-  0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)}
-}
+      @keyframes symShake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-4px);
+        }
+        75% {
+          transform: translateX(4px);
+        }
+      }
 
-.drop-zones {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
+      .drop-zones {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
 
-.drop-zone {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px;
-  min-height: 160px;
-}
+      .drop-zone {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        min-height: 160px;
+      }
 
-.dz-title {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-align: center;
-  padding: 6px 8px;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 1px;
-}
+      .dz-title {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-align: center;
+        padding: 6px 8px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: 1px;
+      }
 
-.dz-items { display: flex; flex-direction: column; gap: 6px; }
+      .dz-items {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
 
-.placed-sym {
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  text-align: center;
-  border: 1px solid;
-  animation: popIn 0.2s;
-}
+      .placed-sym {
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        text-align: center;
+        border: 1px solid;
+        animation: popIn 0.2s;
+      }
 
-@keyframes popIn {
-  from { opacity:0; transform:scale(0.8); }
-  to { opacity:1; transform:scale(1); }
-}
+      @keyframes popIn {
+        from {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
 
-.placed-correct { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
-.placed-wrong { background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.4); color: #fca5a5; }
+      .placed-correct {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.4);
+        color: #6ee7b7;
+      }
+      .placed-wrong {
+        background: rgba(255, 107, 107, 0.1);
+        border-color: rgba(255, 107, 107, 0.4);
+        color: #fca5a5;
+      }
 
-.sorter-controls {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 20px;
-}
+      .sorter-controls {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 20px;
+      }
 
-.btn-sorter {
-  padding: 11px 28px;
-  border-radius: 8px;
-  font-family: 'Anybody', sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s;
-}
+      .btn-sorter {
+        padding: 11px 28px;
+        border-radius: 8px;
+        font-family: 'Anybody', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+      }
 
-.btn-check { background: var(--text); color: var(--bg); }
-.btn-check:hover { background: var(--mg); transform: translateY(-1px); }
-.btn-reset { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-.btn-reset:hover { border-color: var(--text); }
+      .btn-check {
+        background: var(--text);
+        color: var(--bg);
+      }
+      .btn-check:hover {
+        background: var(--mg);
+        transform: translateY(-1px);
+      }
+      .btn-reset {
+        background: var(--surface2);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .btn-reset:hover {
+        border-color: var(--text);
+      }
 
-.sorter-score {
-  text-align: center;
-  margin-top: 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
-  color: var(--muted);
-}
+      .sorter-score {
+        text-align: center;
+        margin-top: 16px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
 
-/* SELECTED SYMPTOM */
-.sym-card.selected-sym { border-color: var(--mg); background: rgba(245,158,11,0.1); color: var(--mg); }
+      /* SELECTED SYMPTOM */
+      .sym-card.selected-sym {
+        border-color: var(--mg);
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--mg);
+      }
 
-/* ============================================
+      /* ============================================
    QUIZ
    ============================================ */
-#quiz-view {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 57px);
-  padding: 32px;
-}
+      #quiz-view {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 57px);
+        padding: 32px;
+      }
 
-.el-quiz-wrap { max-width: 680px; width: 100%; }
+      .el-quiz-wrap {
+        max-width: 680px;
+        width: 100%;
+      }
 
-.el-qcard {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
-  animation: fadeUp 0.25s ease;
-}
+      .el-qcard {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 32px;
+        animation: fadeUp 0.25s ease;
+      }
 
-@keyframes fadeUp {
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
-}
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-.el-qcat {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
+      .el-qcat {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
 
-.el-qtext {
-  font-size: 1.05rem;
-  font-weight: 600;
-  line-height: 1.6;
-  margin-bottom: 22px;
-}
+      .el-qtext {
+        font-size: 1.05rem;
+        font-weight: 600;
+        line-height: 1.6;
+        margin-bottom: 22px;
+      }
 
-.el-qopts { display: flex; flex-direction: column; gap: 9px; }
+      .el-qopts {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
 
-.el-qopt {
-  padding: 13px 18px;
-  border-radius: 9px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text);
-  font-family: 'Anybody', sans-serif;
-  font-size: 0.88rem;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.15s;
-}
+      .el-qopt {
+        padding: 13px 18px;
+        border-radius: 9px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-family: 'Anybody', sans-serif;
+        font-size: 0.88rem;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.15s;
+      }
 
-.el-qopt:hover:not(.disabled) { border-color: var(--mg); }
-.el-qopt.correct { border-color: var(--ca); background: rgba(16,185,129,0.1); color: #6ee7b7; }
-.el-qopt.wrong { border-color: var(--hyper); background: rgba(255,107,107,0.07); color: #fca5a5; }
-.el-qopt.disabled { cursor: default; }
+      .el-qopt:hover:not(.disabled) {
+        border-color: var(--mg);
+      }
+      .el-qopt.correct {
+        border-color: var(--ca);
+        background: rgba(16, 185, 129, 0.1);
+        color: #6ee7b7;
+      }
+      .el-qopt.wrong {
+        border-color: var(--hyper);
+        background: rgba(255, 107, 107, 0.07);
+        color: #fca5a5;
+      }
+      .el-qopt.disabled {
+        cursor: default;
+      }
 
-.el-qfb {
-  margin-top: 14px;
-  padding: 14px 18px;
-  border-radius: 9px;
-  font-size: 0.84rem;
-  line-height: 1.6;
-  animation: fadeUp 0.25s;
-}
+      .el-qfb {
+        margin-top: 14px;
+        padding: 14px 18px;
+        border-radius: 9px;
+        font-size: 0.84rem;
+        line-height: 1.6;
+        animation: fadeUp 0.25s;
+      }
 
-.el-qfb-correct { background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.25); color: #a7f3d0; }
-.el-qfb-wrong { background: rgba(255,107,107,0.06); border: 1px solid rgba(255,107,107,0.2); color: #fecaca; }
+      .el-qfb-correct {
+        background: rgba(16, 185, 129, 0.07);
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        color: #a7f3d0;
+      }
+      .el-qfb-wrong {
+        background: rgba(255, 107, 107, 0.06);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        color: #fecaca;
+      }
 
-.el-qnext {
-  width: 100%;
-  margin-top: 12px;
-  padding: 13px;
-  background: var(--text);
-  color: var(--bg);
-  border: none;
-  border-radius: 9px;
-  font-family: 'Anybody', sans-serif;
-  font-weight: 700;
-  font-size: 0.88rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.5px;
-}
-.el-qnext:hover { background: var(--mg); }
+      .el-qnext {
+        width: 100%;
+        margin-top: 12px;
+        padding: 13px;
+        background: var(--text);
+        color: var(--bg);
+        border: none;
+        border-radius: 9px;
+        font-family: 'Anybody', sans-serif;
+        font-weight: 700;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        letter-spacing: 0.5px;
+      }
+      .el-qnext:hover {
+        background: var(--mg);
+      }
 
-.el-qprogbar { width:100%; height:4px; background:var(--border); border-radius:2px; margin-top:12px; overflow:hidden; }
-.el-qprogfill { height:100%; background:var(--mg); border-radius:2px; transition:width 0.4s; }
+      .el-qprogbar {
+        width: 100%;
+        height: 4px;
+        background: var(--border);
+        border-radius: 2px;
+        margin-top: 12px;
+        overflow: hidden;
+      }
+      .el-qprogfill {
+        height: 100%;
+        background: var(--mg);
+        border-radius: 2px;
+        transition: width 0.4s;
+      }
 
-.qsel-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  max-width: 560px;
-  margin: 24px auto;
-}
+      .qsel-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        max-width: 560px;
+        margin: 24px auto;
+      }
 
-.qsel-card {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 18px 12px;
-  text-align: center;
-  cursor: pointer;
-  background: var(--surface);
-  transition: all 0.2s;
-}
+      .qsel-card {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 18px 12px;
+        text-align: center;
+        cursor: pointer;
+        background: var(--surface);
+        transition: all 0.2s;
+      }
 
-.qsel-card:hover { border-color: var(--mg); transform:translateY(-2px); }
-.qsel-card.sel { border-color: var(--mg); background: rgba(245,158,11,0.06); }
-.qsel-card .qi { font-size: 1.8rem; margin-bottom: 8px; }
-.qsel-card h3 { font-size: 0.88rem; font-weight: 700; }
-.qsel-card p { font-size: 0.7rem; color: var(--muted); margin-top: 3px; }
+      .qsel-card:hover {
+        border-color: var(--mg);
+        transform: translateY(-2px);
+      }
+      .qsel-card.sel {
+        border-color: var(--mg);
+        background: rgba(245, 158, 11, 0.06);
+      }
+      .qsel-card .qi {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+      }
+      .qsel-card h3 {
+        font-size: 0.88rem;
+        font-weight: 700;
+      }
+      .qsel-card p {
+        font-size: 0.7rem;
+        color: var(--muted);
+        margin-top: 3px;
+      }
 
-.btn-start-el {
-  padding: 13px 36px;
-  background: var(--text);
-  color: var(--bg);
-  border: none;
-  border-radius: 9px;
-  font-family: 'Anybody', sans-serif;
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.5px;
-}
-.btn-start-el:hover { background: var(--mg); transform:translateY(-1px); }
+      .btn-start-el {
+        padding: 13px 36px;
+        background: var(--text);
+        color: var(--bg);
+        border: none;
+        border-radius: 9px;
+        font-family: 'Anybody', sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        letter-spacing: 0.5px;
+      }
+      .btn-start-el:hover {
+        background: var(--mg);
+        transform: translateY(-1px);
+      }
 
-.qresult-el {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 48px;
-  text-align: center;
-  animation: fadeUp 0.3s;
-}
-.qresult-el-score { font-size: 4rem; font-weight: 800; color: var(--mg); margin: 12px 0; }
+      .qresult-el {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 48px;
+        text-align: center;
+        animation: fadeUp 0.3s;
+      }
+      .qresult-el-score {
+        font-size: 4rem;
+        font-weight: 800;
+        color: var(--mg);
+        margin: 12px 0;
+      }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-</style>
-</head>
-<body>
-
-<header>
-  <div class="logo-el">
-    <span class="sym sym-na">Na</span><span class="sym sym-k">K</span><span class="sym sym-ca">Ca</span><span class="sym sym-mg">Mg</span>
-    ELECTROLYTES
-  </div>
-  <div class="nav-row">
-    <button class="nav-btn active" onclick="switchEl('explore')">🔬 Explorer</button>
-    <button class="nav-btn" onclick="switchEl('sort')">📊 Symptom Sorter</button>
-    <button class="nav-btn" onclick="switchEl('quiz')">⚡ Quiz</button>
-  </div>
-  <div class="xp-tag" id="el-xp">XP: 0</div>
-</header>
-
-<main class="main">
-
-  <!-- EXPLORER -->
-  <div id="explore-view" class="view active">
-    <div class="pt-grid">
-      <div class="pt-element" style="border-color:rgba(59,130,246,0.4)" onclick="showEl('na')">
-        <div class="el-number">11</div>
-        <div class="el-symbol" style="color:var(--na)">Na</div>
-        <div class="el-name">Sodium</div>
-        <div class="el-normal">135–145 mEq/L</div>
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <span style="font-size: 0.8rem; opacity: 0.5; margin-left: 8px">StudyPRN</span>
+      <div class="logo-el">
+        <span class="sym sym-na">Na</span><span class="sym sym-k">K</span
+        ><span class="sym sym-ca">Ca</span><span class="sym sym-mg">Mg</span>
+        ELECTROLYTES
       </div>
-      <div class="pt-element" style="border-color:rgba(139,92,246,0.4)" onclick="showEl('k')">
-        <div class="el-number">19</div>
-        <div class="el-symbol" style="color:var(--k)">K</div>
-        <div class="el-name">Potassium</div>
-        <div class="el-normal">3.5–5.0 mEq/L</div>
+      <div class="nav-row">
+        <button class="nav-btn active" onclick="switchEl('explore')">🔬 Explorer</button>
+        <button class="nav-btn" onclick="switchEl('sort')">📊 Symptom Sorter</button>
+        <button class="nav-btn" onclick="switchEl('quiz')">⚡ Quiz</button>
       </div>
-      <div class="pt-element" style="border-color:rgba(16,185,129,0.4)" onclick="showEl('ca')">
-        <div class="el-number">20</div>
-        <div class="el-symbol" style="color:var(--ca)">Ca</div>
-        <div class="el-name">Calcium</div>
-        <div class="el-normal">8.5–10.5 mg/dL</div>
+      <div class="xp-tag" id="el-xp">XP: 0</div>
+    </header>
+
+    <main class="main">
+      <!-- EXPLORER -->
+      <div id="explore-view" class="view active">
+        <div class="pt-grid">
+          <div
+            class="pt-element"
+            style="border-color: rgba(59, 130, 246, 0.4)"
+            onclick="showEl('na')"
+          >
+            <div class="el-number">11</div>
+            <div class="el-symbol" style="color: var(--na)">Na</div>
+            <div class="el-name">Sodium</div>
+            <div class="el-normal">135–145 mEq/L</div>
+          </div>
+          <div
+            class="pt-element"
+            style="border-color: rgba(139, 92, 246, 0.4)"
+            onclick="showEl('k')"
+          >
+            <div class="el-number">19</div>
+            <div class="el-symbol" style="color: var(--k)">K</div>
+            <div class="el-name">Potassium</div>
+            <div class="el-normal">3.5–5.0 mEq/L</div>
+          </div>
+          <div
+            class="pt-element"
+            style="border-color: rgba(16, 185, 129, 0.4)"
+            onclick="showEl('ca')"
+          >
+            <div class="el-number">20</div>
+            <div class="el-symbol" style="color: var(--ca)">Ca</div>
+            <div class="el-name">Calcium</div>
+            <div class="el-normal">8.5–10.5 mg/dL</div>
+          </div>
+          <div
+            class="pt-element"
+            style="border-color: rgba(245, 158, 11, 0.4)"
+            onclick="showEl('mg')"
+          >
+            <div class="el-number">12</div>
+            <div class="el-symbol" style="color: var(--mg)">Mg</div>
+            <div class="el-name">Magnesium</div>
+            <div class="el-normal">1.5–2.5 mEq/L</div>
+          </div>
+        </div>
+        <div class="el-detail-area" id="el-detail">
+          <div class="el-detail-placeholder">
+            <div class="big">⚗️</div>
+            <p>
+              Click an element above to explore hyper and hypo states, causes, symptoms, and
+              treatments
+            </p>
+          </div>
+        </div>
       </div>
-      <div class="pt-element" style="border-color:rgba(245,158,11,0.4)" onclick="showEl('mg')">
-        <div class="el-number">12</div>
-        <div class="el-symbol" style="color:var(--mg)">Mg</div>
-        <div class="el-name">Magnesium</div>
-        <div class="el-normal">1.5–2.5 mEq/L</div>
+
+      <!-- SYMPTOM SORTER -->
+      <div id="sort-view" class="view">
+        <div class="sorter-header">
+          <h2>Symptom Sorter</h2>
+          <p>Click a symptom, then click the correct electrolyte imbalance box it belongs to</p>
+        </div>
+        <div class="sorter-layout">
+          <div class="symptom-pool" id="symptom-pool"></div>
+          <div class="drop-zones" id="drop-zones"></div>
+          <div class="sorter-controls">
+            <button class="btn-sorter btn-check" onclick="checkSorter()">Check Answers ✓</button>
+            <button class="btn-sorter btn-reset" onclick="initSorter()">Reset ↺</button>
+          </div>
+          <div class="sorter-score" id="sorter-score"></div>
+        </div>
       </div>
-    </div>
-    <div class="el-detail-area" id="el-detail">
-      <div class="el-detail-placeholder">
-        <div class="big">⚗️</div>
-        <p>Click an element above to explore hyper and hypo states, causes, symptoms, and treatments</p>
+
+      <!-- QUIZ -->
+      <div id="quiz-view" class="view">
+        <div class="el-quiz-wrap" id="el-quiz-wrap"></div>
       </div>
-    </div>
-  </div>
+    </main>
 
-  <!-- SYMPTOM SORTER -->
-  <div id="sort-view" class="view">
-    <div class="sorter-header">
-      <h2>Symptom Sorter</h2>
-      <p>Click a symptom, then click the correct electrolyte imbalance box it belongs to</p>
-    </div>
-    <div class="sorter-layout">
-      <div class="symptom-pool" id="symptom-pool"></div>
-      <div class="drop-zones" id="drop-zones"></div>
-      <div class="sorter-controls">
-        <button class="btn-sorter btn-check" onclick="checkSorter()">Check Answers ✓</button>
-        <button class="btn-sorter btn-reset" onclick="initSorter()">Reset ↺</button>
-      </div>
-      <div class="sorter-score" id="sorter-score"></div>
-    </div>
-  </div>
+    <script>
+      // =============================================
+      // ELECTROLYTE DATA
+      // =============================================
+      const EL_DATA = {
+        na: {
+          symbol: 'Na',
+          color: 'var(--na)',
+          name: 'Sodium',
+          hyper: {
+            name: 'Hypernatremia',
+            range: 'Na+ > 145 mEq/L',
+            causes: [
+              'Excess sodium intake',
+              'Inadequate water intake (cognitively impaired)',
+              'Dehydration / excess water loss',
+              'Diabetes insipidus',
+              'Enteral nutrition without water flushes',
+            ],
+            symptoms: [
+              '🧠 Intense thirst',
+              '🧠 Agitation, restlessness',
+              '🧠 Lethargy, seizures, coma (severe)',
+              '💧 Dry mucous membranes (water deficit)',
+              '📈 Elevated BP (sodium excess)',
+              '⚖️ Weight gain (sodium excess)',
+            ],
+            treatment: [
+              {
+                level: 'mild',
+                text: 'Water deficiency → Replace water (oral fluids or hypotonic IV)',
+              },
+              {
+                level: 'moderate',
+                text: 'Sodium excess → Sodium-free IV fluids + salt restriction',
+              },
+              {
+                level: 'severe',
+                text: 'ALOC/Seizures → Seizure precautions. Lower sodium SLOWLY (<10 mEq/L/day)',
+              },
+            ],
+            ekg: null,
+          },
+          hypo: {
+            name: 'Hyponatremia',
+            range: 'Na+ < 135 mEq/L',
+            causes: [
+              'SIADH',
+              'Water intoxication / excess water intake',
+              'Thiazide diuretics',
+              'GI losses (vomiting, diarrhea)',
+              'Wound/burn sodium losses',
+            ],
+            symptoms: [
+              '🧠 Headache, confusion',
+              '🧠 Seizures, coma (severe)',
+              '🤢 N/V/D, abdominal cramps (water excess)',
+              '💧 Dry mucous membranes (sodium loss)',
+              '📉 Low BP + elevated HR (sodium loss)',
+              '⚖️ Weight gain (water excess)',
+            ],
+            treatment: [
+              {
+                level: 'mild',
+                text: 'Sodium deficiency → Isotonic Na-containing IV fluid. Hold diuretics.',
+              },
+              {
+                level: 'moderate',
+                text: 'Water excess → Fluid restriction order ± loop diuretics',
+              },
+              {
+                level: 'severe',
+                text: 'Severe symptoms/seizures → 3% Hypertonic NaCl. RAISE sodium SLOWLY (<10–12 mEq/L/24hr)',
+              },
+            ],
+            ekg: null,
+          },
+        },
+        k: {
+          symbol: 'K',
+          color: 'var(--k)',
+          name: 'Potassium',
+          hyper: {
+            name: 'Hyperkalemia',
+            range: 'K+ > 5.0 mEq/L',
+            causes: [
+              'Renal disease / failure',
+              'Potassium-sparing diuretics (spironolactone)',
+              'Tissue catabolism — crush injury, sepsis, burns',
+              'Insufficient insulin (K stays out of cells)',
+              'Excess K intake (drugs, salt substitutes)',
+            ],
+            symptoms: [
+              '💩 Diarrhea, vomiting (hyperactive GI)',
+              '💪 Muscle cramps → weakness',
+              '😵 Fatigue, irritability, confusion',
+              '❤️ Irregular pulse, dysrhythmias',
+              '📈 Peaked T waves on EKG',
+              '📈 Widened QRS, sine wave pattern (severe)',
+            ],
+            treatment: [
+              { level: 'mild', text: 'Stop all oral and IV K+ intake' },
+              {
+                level: 'moderate',
+                text: 'Increase excretion: Lokelma, Kayexalate, loop diuretics, dialysis',
+              },
+              {
+                level: 'severe',
+                text: 'Symptomatic: Force K+ from ECF → ICF with IV regular insulin + dextrose, nebulized albuterol. Continuous ECG monitoring.',
+              },
+            ],
+            ekg: '⚡ EKG: Peaked/tall T waves → Widened QRS → Sine-wave pattern → VFib',
+          },
+          hypo: {
+            name: 'Hypokalemia',
+            range: 'K+ < 3.5 mEq/L',
+            causes: [
+              'GI losses: diarrhea, vomiting, NG suction',
+              'Potassium-wasting diuretics (furosemide, HCTZ)',
+              'Anorexia, prolonged NPO',
+              'Excess insulin therapy (shifts K into cells)',
+              'Diabetic ketoacidosis treatment',
+            ],
+            symptoms: [
+              '🤢 Nausea, constipation (hypoactive GI)',
+              '💪 Muscle cramps → weakness',
+              '😵 Fatigue, irritability',
+              '❤️ Irregular pulse, dysrhythmias',
+              '📉 Flat/shallow T waves on EKG',
+              '📉 Prominent U wave (classic finding)',
+            ],
+            treatment: [
+              { level: 'mild', text: 'Mild: Increase K-rich foods (bananas, oranges, potatoes)' },
+              { level: 'moderate', text: 'Moderate/Severe: Potassium Chloride (KCl) PO or IV' },
+              {
+                level: 'severe',
+                text: '🚨 IV KCl NEVER as bolus/IV push — ALWAYS diluted on pump. Max 10 mEq/hr peripherally. Monitor IV site (necrosis risk).',
+              },
+            ],
+            ekg: '⚡ EKG: ST depression → Flat/shallow T waves → Prominent U wave',
+          },
+        },
+        ca: {
+          symbol: 'Ca',
+          color: 'var(--ca)',
+          name: 'Calcium',
+          hyper: {
+            name: 'Hypercalcemia',
+            range: 'Ca2+ > 10.5 mg/dL',
+            causes: [
+              'Hyperparathyroidism (2/3 of cases)',
+              'Various cancers (bone metastases, PTHrP)',
+              'Prolonged immobility',
+              'Excess vitamin D or calcium supplementation',
+            ],
+            symptoms: [
+              '😴 Fatigue, weakness, confusion, seizure',
+              '❤️ Dysrhythmias, elevated BP',
+              '↓ Decreased deep tendon reflexes',
+              '🤢 Anorexia, N/V',
+              '🚽 Polyuria → dehydration → kidney stones',
+              '🦴 Bone pain',
+            ],
+            treatment: [
+              {
+                level: 'mild',
+                text: 'Dietary changes, increased weight-bearing activity, fluids 3–4L/day',
+              },
+              { level: 'moderate', text: 'Hydration with isotonic saline (promotes Ca excretion)' },
+              {
+                level: 'severe',
+                text: 'Bisphosphonates — gold standard (zoledronic acid). Treat underlying cause.',
+              },
+            ],
+            ekg: '⚡ EKG: Shortened QT interval',
+          },
+          hypo: {
+            name: 'Hypocalcemia',
+            range: 'Ca2+ < 8.5 mg/dL',
+            causes: [
+              'Hypoparathyroidism (e.g., post-thyroid surgery)',
+              'Chronic kidney disease',
+              'Chronic alcoholism, malnutrition',
+              'Acute pancreatitis',
+              'Vitamin D deficiency',
+            ],
+            symptoms: [
+              '😴 Fatigue, weakness, confusion',
+              '❤️ Dysrhythmias, decreased BP',
+              '↑ Hyperreflexia, tetany',
+              "✋ Trousseau's sign (carpopedal spasm with BP cuff)",
+              "😬 Chvostek's sign (facial twitch with cheek tap)",
+              '🔊 Laryngeal stridor, numbness/tingling around mouth',
+            ],
+            treatment: [
+              { level: 'mild', text: 'Dietary changes + Calcium & Vitamin D supplements' },
+              { level: 'moderate', text: 'Treat underlying cause' },
+              { level: 'severe', text: 'Symptomatic (tetany/dysrhythmias): IV calcium gluconate' },
+            ],
+            ekg: '⚡ EKG: Prolonged QT interval',
+          },
+        },
+        mg: {
+          symbol: 'Mg',
+          color: 'var(--mg)',
+          name: 'Magnesium',
+          hyper: {
+            name: 'Hypermagnesemia',
+            range: 'Mg2+ > 2.5 mEq/L',
+            causes: [
+              'Renal failure (inability to excrete Mg)',
+              'Excess IV magnesium administration',
+              'Magnesium-containing laxatives / antacids in renal patients',
+            ],
+            symptoms: [
+              '😴 Lethargy, muscle weakness',
+              '↓ Decreased deep tendon reflexes (early sign)',
+              '📉 Decreased BP and HR',
+              '🚽 Urinary retention, N/V',
+              '💀 Muscle paralysis, respiratory arrest (severe)',
+              '💀 Cardiac arrest (severe)',
+            ],
+            treatment: [
+              { level: 'mild', text: 'Mild: Restrict Mg intake ± fluids and diuretics' },
+              {
+                level: 'moderate',
+                text: 'Symptomatic: IV calcium chloride or IV calcium gluconate (antagonizes Mg)',
+              },
+              { level: 'severe', text: 'Impaired renal function: Hemodialysis' },
+            ],
+            ekg: '⚡ EKG: Widened QRS, prolonged PR interval, bradycardia',
+          },
+          hypo: {
+            name: 'Hypomagnesemia',
+            range: 'Mg2+ < 1.5 mEq/L',
+            causes: [
+              'Chronic alcoholism',
+              'Prolonged fasting, starvation, malnutrition',
+              'GI fluid losses (emesis, gastric suction)',
+              'Loop or thiazide diuretics',
+              'PPI use (chronic)',
+            ],
+            symptoms: [
+              "✋ Trousseau's sign",
+              "😬 Chvostek's sign (mirrors hypocalcemia)",
+              '↑ Hyperactive deep tendon reflexes',
+              '😵 Confusion, seizures',
+              '❤️ Dysrhythmias',
+              '😴 Fatigue, muscle weakness',
+            ],
+            treatment: [
+              { level: 'mild', text: 'Mild: Oral Mg supplements + increased dietary intake' },
+              { level: 'moderate', text: 'Correct underlying cause' },
+              {
+                level: 'severe',
+                text: 'Severe or with hypocalcemia: IV magnesium — ALWAYS on a pump',
+              },
+            ],
+            ekg: '⚡ EKG: Similar to hypokalemia — flat T waves, U waves, dysrhythmias',
+          },
+        },
+      };
 
-  <!-- QUIZ -->
-  <div id="quiz-view" class="view">
-    <div class="el-quiz-wrap" id="el-quiz-wrap"></div>
-  </div>
+      // =============================================
+      // QUIZ QUESTIONS
+      // =============================================
+      const EL_QUESTIONS = [
+        {
+          cat: 'Sodium',
+          q: 'A patient develops confusion, intense thirst, and dry mucous membranes. Na+ is 152 mEq/L. This is MOST consistent with which condition?',
+          opts: [
+            'Hyponatremia',
+            'Hypernatremia with water deficiency',
+            'Hypernatremia with sodium excess',
+            'SIADH',
+          ],
+          ans: 1,
+          exp: 'Hypernatremia from water deficiency (dehydration) causes intense thirst, dry mucous membranes, and CNS changes. The body is relatively deficient in water compared to sodium.',
+        },
+        {
+          cat: 'Sodium',
+          q: 'SIADH (Syndrome of Inappropriate ADH) causes which electrolyte imbalance?',
+          opts: ['Hypernatremia', 'Hyperkalemia', 'Hyponatremia (dilutional)', 'Hypocalcemia'],
+          ans: 2,
+          exp: 'SIADH causes excess ADH release → excess water retention → dilutes sodium → dilutional hyponatremia. The patient retains water without a real need to, lowering serum sodium.',
+        },
+        {
+          cat: 'Sodium',
+          q: 'Why must sodium levels be corrected SLOWLY in both hyponatremia and hypernatremia?',
+          opts: [
+            'To prevent kidney injury',
+            'To prevent cerebral osmotic injury (edema or demyelination)',
+            'To prevent cardiac arrest',
+            'To allow aldosterone to adjust',
+          ],
+          ans: 1,
+          exp: 'Rapid Na correction causes the brain to experience sudden osmotic shifts. In hyponatremia correction: too-fast increase causes pontine demyelination syndrome. In hypernatremia correction: too-fast decrease causes cerebral edema.',
+        },
+        {
+          cat: 'Potassium',
+          q: 'A patient on furosemide (Lasix) is at risk for which electrolyte imbalance?',
+          opts: ['Hyperkalemia', 'Hyponatremia', 'Hypokalemia', 'Hypermagnesemia'],
+          ans: 2,
+          exp: 'Furosemide is a loop diuretic — a potassium-WASTING diuretic. It causes significant K+ and Na+ loss in the urine. Patients on long-term furosemide frequently develop hypokalemia.',
+        },
+        {
+          cat: 'Potassium',
+          q: 'The CLASSIC EKG finding for hyperkalemia is:',
+          opts: [
+            'Prolonged QT interval',
+            'Peaked/tall T waves',
+            'Prominent U wave',
+            'ST elevation',
+          ],
+          ans: 1,
+          exp: 'Peaked T waves are the earliest EKG change in hyperkalemia. As K rises further: widened QRS → sine-wave pattern → ventricular fibrillation. ECG monitoring is essential in any patient with hyperkalemia.',
+        },
+        {
+          cat: 'Potassium',
+          q: 'IV potassium chloride (KCl) must NEVER be given as a bolus or IV push because it causes:',
+          opts: [
+            'Pulmonary edema',
+            'Severe hypotension only',
+            'Fatal cardiac dysrhythmia',
+            'Renal failure',
+          ],
+          ans: 2,
+          exp: 'Bolus IV potassium causes immediate fatal ventricular dysrhythmia. KCl must ALWAYS be diluted and administered via infusion pump. The max rate peripherally is 10 mEq/hour outside the ICU.',
+        },
+        {
+          cat: 'Calcium',
+          q: "Trousseau's sign and Chvostek's sign are clinical assessments for:",
+          opts: [
+            'Hyperkalemia',
+            'Hyponatremia',
+            'Hypocalcemia (or hypomagnesemia)',
+            'Hyperphosphatemia',
+          ],
+          ans: 2,
+          exp: "Trousseau's sign (carpal spasm with BP cuff inflation) and Chvostek's sign (facial twitch with facial nerve tap) are signs of neuromuscular irritability caused by hypocalcemia or hypomagnesemia.",
+        },
+        {
+          cat: 'Calcium',
+          q: 'Hyperparathyroidism causes which electrolyte imbalance?',
+          opts: ['Hypocalcemia', 'Hypercalcemia', 'Hypernatremia', 'Hyperkalemia'],
+          ans: 1,
+          exp: 'PTH (parathyroid hormone) raises calcium by stimulating bone resorption and renal calcium reabsorption. Hyperparathyroidism causes excess PTH → hypercalcemia. It accounts for 2/3 of hypercalcemia cases.',
+        },
+        {
+          cat: 'Calcium',
+          q: 'Chronic kidney disease commonly causes hypocalcemia. Which mechanism explains this?',
+          opts: [
+            'Kidneys excrete too much calcium',
+            'Impaired Vitamin D activation and phosphate retention pulls calcium down',
+            'ADH deficiency reduces calcium reabsorption',
+            'Aldosterone blocks calcium channels',
+          ],
+          ans: 1,
+          exp: 'CKD impairs renal activation of Vitamin D (needed for GI Ca absorption) AND causes hyperphosphatemia. Since Ca and phosphate have a reciprocal relationship, high phosphate drives calcium down.',
+        },
+        {
+          cat: 'Magnesium',
+          q: 'Hypomagnesemia often co-exists with hypocalcemia. Why?',
+          opts: [
+            'They are absorbed together in the GI tract',
+            'Mg deficiency impairs PTH secretion and action, reducing calcium',
+            'Both are controlled by aldosterone',
+            'Mg competes with Ca at renal tubules',
+          ],
+          ans: 1,
+          exp: 'Magnesium is required for PTH secretion and for target organs to respond to PTH. Low Mg → impaired PTH function → hypocalcemia. Always check Mg when Ca is low, and vice versa.',
+        },
+        {
+          cat: 'Magnesium',
+          q: 'Which patient is MOST at risk for hypomagnesemia?',
+          opts: [
+            'A patient on long-term antacids with CKD',
+            'A 55-year-old with chronic alcoholism and poor nutrition',
+            'A patient with hyperparathyroidism',
+            'A patient on potassium-sparing diuretics',
+          ],
+          ans: 1,
+          exp: 'Chronic alcoholism causes poor dietary intake, GI malabsorption, and increased urinary Mg excretion. It is the most common cause of hypomagnesemia in hospitalized patients.',
+        },
+        {
+          cat: 'Phosphate',
+          q: 'Phosphate and calcium have a RECIPROCAL relationship. What does this mean clinically?',
+          opts: [
+            'When phosphate rises, calcium also rises',
+            'When phosphate rises, calcium falls (and vice versa)',
+            'They are controlled by the same hormone',
+            'They only change in renal failure',
+          ],
+          ans: 1,
+          exp: 'Ca and phosphate have a reciprocal (inverse) relationship. When phosphate rises (as in CKD), calcium falls — causing hypocalcemia. Treatment of hyperphosphatemia with phosphate binders is important in CKD to protect calcium levels.',
+        },
+      ];
 
-</main>
+      // =============================================
+      // SORTER DATA
+      // =============================================
+      const SORTER_ZONES = [
+        { id: 'hyperna', label: 'HYPER-Na', title: 'Hypernatremia', color: '#3b82f6' },
+        { id: 'hypona', label: 'HYPO-Na', title: 'Hyponatremia', color: '#93c5fd' },
+        { id: 'hyperk', label: 'HYPER-K', title: 'Hyperkalemia', color: '#8b5cf6' },
+        { id: 'hypok', label: 'HYPO-K', title: 'Hypokalemia', color: '#c4b5fd' },
+      ];
 
-<script>
-// =============================================
-// ELECTROLYTE DATA
-// =============================================
-const EL_DATA = {
-  na: {
-    symbol: 'Na', color: 'var(--na)', name: 'Sodium',
-    hyper: {
-      name: 'Hypernatremia', range: 'Na+ > 145 mEq/L',
-      causes: ['Excess sodium intake', 'Inadequate water intake (cognitively impaired)', 'Dehydration / excess water loss', 'Diabetes insipidus', 'Enteral nutrition without water flushes'],
-      symptoms: ['🧠 Intense thirst', '🧠 Agitation, restlessness', '🧠 Lethargy, seizures, coma (severe)', '💧 Dry mucous membranes (water deficit)', '📈 Elevated BP (sodium excess)', '⚖️ Weight gain (sodium excess)'],
-      treatment: [
-        { level: 'mild', text: 'Water deficiency → Replace water (oral fluids or hypotonic IV)' },
-        { level: 'moderate', text: 'Sodium excess → Sodium-free IV fluids + salt restriction' },
-        { level: 'severe', text: 'ALOC/Seizures → Seizure precautions. Lower sodium SLOWLY (<10 mEq/L/day)' }
-      ],
-      ekg: null
-    },
-    hypo: {
-      name: 'Hyponatremia', range: 'Na+ < 135 mEq/L',
-      causes: ['SIADH', 'Water intoxication / excess water intake', 'Thiazide diuretics', 'GI losses (vomiting, diarrhea)', 'Wound/burn sodium losses'],
-      symptoms: ['🧠 Headache, confusion', '🧠 Seizures, coma (severe)', '🤢 N/V/D, abdominal cramps (water excess)', '💧 Dry mucous membranes (sodium loss)', '📉 Low BP + elevated HR (sodium loss)', '⚖️ Weight gain (water excess)'],
-      treatment: [
-        { level: 'mild', text: 'Sodium deficiency → Isotonic Na-containing IV fluid. Hold diuretics.' },
-        { level: 'moderate', text: 'Water excess → Fluid restriction order ± loop diuretics' },
-        { level: 'severe', text: 'Severe symptoms/seizures → 3% Hypertonic NaCl. RAISE sodium SLOWLY (<10–12 mEq/L/24hr)' }
-      ],
-      ekg: null
-    }
-  },
-  k: {
-    symbol: 'K', color: 'var(--k)', name: 'Potassium',
-    hyper: {
-      name: 'Hyperkalemia', range: 'K+ > 5.0 mEq/L',
-      causes: ['Renal disease / failure', 'Potassium-sparing diuretics (spironolactone)', 'Tissue catabolism — crush injury, sepsis, burns', 'Insufficient insulin (K stays out of cells)', 'Excess K intake (drugs, salt substitutes)'],
-      symptoms: ['💩 Diarrhea, vomiting (hyperactive GI)', '💪 Muscle cramps → weakness', '😵 Fatigue, irritability, confusion', '❤️ Irregular pulse, dysrhythmias', '📈 Peaked T waves on EKG', '📈 Widened QRS, sine wave pattern (severe)'],
-      treatment: [
-        { level: 'mild', text: 'Stop all oral and IV K+ intake' },
-        { level: 'moderate', text: 'Increase excretion: Lokelma, Kayexalate, loop diuretics, dialysis' },
-        { level: 'severe', text: 'Symptomatic: Force K+ from ECF → ICF with IV regular insulin + dextrose, nebulized albuterol. Continuous ECG monitoring.' }
-      ],
-      ekg: '⚡ EKG: Peaked/tall T waves → Widened QRS → Sine-wave pattern → VFib'
-    },
-    hypo: {
-      name: 'Hypokalemia', range: 'K+ < 3.5 mEq/L',
-      causes: ['GI losses: diarrhea, vomiting, NG suction', 'Potassium-wasting diuretics (furosemide, HCTZ)', 'Anorexia, prolonged NPO', 'Excess insulin therapy (shifts K into cells)', 'Diabetic ketoacidosis treatment'],
-      symptoms: ['🤢 Nausea, constipation (hypoactive GI)', '💪 Muscle cramps → weakness', '😵 Fatigue, irritability', '❤️ Irregular pulse, dysrhythmias', '📉 Flat/shallow T waves on EKG', '📉 Prominent U wave (classic finding)'],
-      treatment: [
-        { level: 'mild', text: 'Mild: Increase K-rich foods (bananas, oranges, potatoes)' },
-        { level: 'moderate', text: 'Moderate/Severe: Potassium Chloride (KCl) PO or IV' },
-        { level: 'severe', text: '🚨 IV KCl NEVER as bolus/IV push — ALWAYS diluted on pump. Max 10 mEq/hr peripherally. Monitor IV site (necrosis risk).' }
-      ],
-      ekg: '⚡ EKG: ST depression → Flat/shallow T waves → Prominent U wave'
-    }
-  },
-  ca: {
-    symbol: 'Ca', color: 'var(--ca)', name: 'Calcium',
-    hyper: {
-      name: 'Hypercalcemia', range: 'Ca2+ > 10.5 mg/dL',
-      causes: ['Hyperparathyroidism (2/3 of cases)', 'Various cancers (bone metastases, PTHrP)', 'Prolonged immobility', 'Excess vitamin D or calcium supplementation'],
-      symptoms: ['😴 Fatigue, weakness, confusion, seizure', '❤️ Dysrhythmias, elevated BP', '↓ Decreased deep tendon reflexes', '🤢 Anorexia, N/V', '🚽 Polyuria → dehydration → kidney stones', '🦴 Bone pain'],
-      treatment: [
-        { level: 'mild', text: 'Dietary changes, increased weight-bearing activity, fluids 3–4L/day' },
-        { level: 'moderate', text: 'Hydration with isotonic saline (promotes Ca excretion)' },
-        { level: 'severe', text: 'Bisphosphonates — gold standard (zoledronic acid). Treat underlying cause.' }
-      ],
-      ekg: '⚡ EKG: Shortened QT interval'
-    },
-    hypo: {
-      name: 'Hypocalcemia', range: 'Ca2+ < 8.5 mg/dL',
-      causes: ['Hypoparathyroidism (e.g., post-thyroid surgery)', 'Chronic kidney disease', 'Chronic alcoholism, malnutrition', 'Acute pancreatitis', 'Vitamin D deficiency'],
-      symptoms: ['😴 Fatigue, weakness, confusion', '❤️ Dysrhythmias, decreased BP', '↑ Hyperreflexia, tetany', '✋ Trousseau\'s sign (carpopedal spasm with BP cuff)', '😬 Chvostek\'s sign (facial twitch with cheek tap)', '🔊 Laryngeal stridor, numbness/tingling around mouth'],
-      treatment: [
-        { level: 'mild', text: 'Dietary changes + Calcium & Vitamin D supplements' },
-        { level: 'moderate', text: 'Treat underlying cause' },
-        { level: 'severe', text: 'Symptomatic (tetany/dysrhythmias): IV calcium gluconate' }
-      ],
-      ekg: '⚡ EKG: Prolonged QT interval'
-    }
-  },
-  mg: {
-    symbol: 'Mg', color: 'var(--mg)', name: 'Magnesium',
-    hyper: {
-      name: 'Hypermagnesemia', range: 'Mg2+ > 2.5 mEq/L',
-      causes: ['Renal failure (inability to excrete Mg)', 'Excess IV magnesium administration', 'Magnesium-containing laxatives / antacids in renal patients'],
-      symptoms: ['😴 Lethargy, muscle weakness', '↓ Decreased deep tendon reflexes (early sign)', '📉 Decreased BP and HR', '🚽 Urinary retention, N/V', '💀 Muscle paralysis, respiratory arrest (severe)', '💀 Cardiac arrest (severe)'],
-      treatment: [
-        { level: 'mild', text: 'Mild: Restrict Mg intake ± fluids and diuretics' },
-        { level: 'moderate', text: 'Symptomatic: IV calcium chloride or IV calcium gluconate (antagonizes Mg)' },
-        { level: 'severe', text: 'Impaired renal function: Hemodialysis' }
-      ],
-      ekg: '⚡ EKG: Widened QRS, prolonged PR interval, bradycardia'
-    },
-    hypo: {
-      name: 'Hypomagnesemia', range: 'Mg2+ < 1.5 mEq/L',
-      causes: ['Chronic alcoholism', 'Prolonged fasting, starvation, malnutrition', 'GI fluid losses (emesis, gastric suction)', 'Loop or thiazide diuretics', 'PPI use (chronic)'],
-      symptoms: ['✋ Trousseau\'s sign', '😬 Chvostek\'s sign (mirrors hypocalcemia)', '↑ Hyperactive deep tendon reflexes', '😵 Confusion, seizures', '❤️ Dysrhythmias', '😴 Fatigue, muscle weakness'],
-      treatment: [
-        { level: 'mild', text: 'Mild: Oral Mg supplements + increased dietary intake' },
-        { level: 'moderate', text: 'Correct underlying cause' },
-        { level: 'severe', text: 'Severe or with hypocalcemia: IV magnesium — ALWAYS on a pump' }
-      ],
-      ekg: '⚡ EKG: Similar to hypokalemia — flat T waves, U waves, dysrhythmias'
-    }
-  }
-};
+      const SORTER_SYMPTOMS = [
+        { text: 'Peaked T waves on EKG', correct: 'hyperk' },
+        { text: 'Prominent U wave on EKG', correct: 'hypok' },
+        { text: 'Intense thirst + dry mucous membranes', correct: 'hyperna' },
+        { text: 'N/V + abdominal cramps', correct: 'hypona' },
+        { text: 'Confusion + seizures (water excess)', correct: 'hypona' },
+        { text: 'Agitation + restlessness (high sodium)', correct: 'hyperna' },
+        { text: 'Muscle weakness + cramps (high K)', correct: 'hyperk' },
+        { text: 'Constipation + hypoactive bowel sounds', correct: 'hypok' },
+        { text: 'Diarrhea + vomiting (high K)', correct: 'hyperk' },
+        { text: 'Postural hypotension + weight loss', correct: 'hypona' },
+        { text: 'Edema + weight gain (sodium excess)', correct: 'hyperna' },
+        { text: 'Fatigue + irritability (low K)', correct: 'hypok' },
+      ];
 
-// =============================================
-// QUIZ QUESTIONS
-// =============================================
-const EL_QUESTIONS = [
-  { cat: 'Sodium', q: 'A patient develops confusion, intense thirst, and dry mucous membranes. Na+ is 152 mEq/L. This is MOST consistent with which condition?', opts: ['Hyponatremia', 'Hypernatremia with water deficiency', 'Hypernatremia with sodium excess', 'SIADH'], ans: 1, exp: 'Hypernatremia from water deficiency (dehydration) causes intense thirst, dry mucous membranes, and CNS changes. The body is relatively deficient in water compared to sodium.' },
-  { cat: 'Sodium', q: 'SIADH (Syndrome of Inappropriate ADH) causes which electrolyte imbalance?', opts: ['Hypernatremia', 'Hyperkalemia', 'Hyponatremia (dilutional)', 'Hypocalcemia'], ans: 2, exp: 'SIADH causes excess ADH release → excess water retention → dilutes sodium → dilutional hyponatremia. The patient retains water without a real need to, lowering serum sodium.' },
-  { cat: 'Sodium', q: 'Why must sodium levels be corrected SLOWLY in both hyponatremia and hypernatremia?', opts: ['To prevent kidney injury', 'To prevent cerebral osmotic injury (edema or demyelination)', 'To prevent cardiac arrest', 'To allow aldosterone to adjust'], ans: 1, exp: 'Rapid Na correction causes the brain to experience sudden osmotic shifts. In hyponatremia correction: too-fast increase causes pontine demyelination syndrome. In hypernatremia correction: too-fast decrease causes cerebral edema.' },
-  { cat: 'Potassium', q: 'A patient on furosemide (Lasix) is at risk for which electrolyte imbalance?', opts: ['Hyperkalemia', 'Hyponatremia', 'Hypokalemia', 'Hypermagnesemia'], ans: 2, exp: 'Furosemide is a loop diuretic — a potassium-WASTING diuretic. It causes significant K+ and Na+ loss in the urine. Patients on long-term furosemide frequently develop hypokalemia.' },
-  { cat: 'Potassium', q: 'The CLASSIC EKG finding for hyperkalemia is:', opts: ['Prolonged QT interval', 'Peaked/tall T waves', 'Prominent U wave', 'ST elevation'], ans: 1, exp: 'Peaked T waves are the earliest EKG change in hyperkalemia. As K rises further: widened QRS → sine-wave pattern → ventricular fibrillation. ECG monitoring is essential in any patient with hyperkalemia.' },
-  { cat: 'Potassium', q: 'IV potassium chloride (KCl) must NEVER be given as a bolus or IV push because it causes:', opts: ['Pulmonary edema', 'Severe hypotension only', 'Fatal cardiac dysrhythmia', 'Renal failure'], ans: 2, exp: 'Bolus IV potassium causes immediate fatal ventricular dysrhythmia. KCl must ALWAYS be diluted and administered via infusion pump. The max rate peripherally is 10 mEq/hour outside the ICU.' },
-  { cat: 'Calcium', q: 'Trousseau\'s sign and Chvostek\'s sign are clinical assessments for:', opts: ['Hyperkalemia', 'Hyponatremia', 'Hypocalcemia (or hypomagnesemia)', 'Hyperphosphatemia'], ans: 2, exp: 'Trousseau\'s sign (carpal spasm with BP cuff inflation) and Chvostek\'s sign (facial twitch with facial nerve tap) are signs of neuromuscular irritability caused by hypocalcemia or hypomagnesemia.' },
-  { cat: 'Calcium', q: 'Hyperparathyroidism causes which electrolyte imbalance?', opts: ['Hypocalcemia', 'Hypercalcemia', 'Hypernatremia', 'Hyperkalemia'], ans: 1, exp: 'PTH (parathyroid hormone) raises calcium by stimulating bone resorption and renal calcium reabsorption. Hyperparathyroidism causes excess PTH → hypercalcemia. It accounts for 2/3 of hypercalcemia cases.' },
-  { cat: 'Calcium', q: 'Chronic kidney disease commonly causes hypocalcemia. Which mechanism explains this?', opts: ['Kidneys excrete too much calcium', 'Impaired Vitamin D activation and phosphate retention pulls calcium down', 'ADH deficiency reduces calcium reabsorption', 'Aldosterone blocks calcium channels'], ans: 1, exp: 'CKD impairs renal activation of Vitamin D (needed for GI Ca absorption) AND causes hyperphosphatemia. Since Ca and phosphate have a reciprocal relationship, high phosphate drives calcium down.' },
-  { cat: 'Magnesium', q: 'Hypomagnesemia often co-exists with hypocalcemia. Why?', opts: ['They are absorbed together in the GI tract', 'Mg deficiency impairs PTH secretion and action, reducing calcium', 'Both are controlled by aldosterone', 'Mg competes with Ca at renal tubules'], ans: 1, exp: 'Magnesium is required for PTH secretion and for target organs to respond to PTH. Low Mg → impaired PTH function → hypocalcemia. Always check Mg when Ca is low, and vice versa.' },
-  { cat: 'Magnesium', q: 'Which patient is MOST at risk for hypomagnesemia?', opts: ['A patient on long-term antacids with CKD', 'A 55-year-old with chronic alcoholism and poor nutrition', 'A patient with hyperparathyroidism', 'A patient on potassium-sparing diuretics'], ans: 1, exp: 'Chronic alcoholism causes poor dietary intake, GI malabsorption, and increased urinary Mg excretion. It is the most common cause of hypomagnesemia in hospitalized patients.' },
-  { cat: 'Phosphate', q: 'Phosphate and calcium have a RECIPROCAL relationship. What does this mean clinically?', opts: ['When phosphate rises, calcium also rises', 'When phosphate rises, calcium falls (and vice versa)', 'They are controlled by the same hormone', 'They only change in renal failure'], ans: 1, exp: 'Ca and phosphate have a reciprocal (inverse) relationship. When phosphate rises (as in CKD), calcium falls — causing hypocalcemia. Treatment of hyperphosphatemia with phosphate binders is important in CKD to protect calcium levels.' },
-];
+      // =============================================
+      // STATE
+      // =============================================
+      let elXP = 0;
+      let elQuizQ = [],
+        elQuizIdx = 0,
+        elQuizScore = 0,
+        elQuizAnswered = false,
+        elQuizType = 'all';
+      let sorterSelectedSym = null,
+        sorterPlacements = {};
 
-// =============================================
-// SORTER DATA
-// =============================================
-const SORTER_ZONES = [
-  { id: 'hyperna', label: 'HYPER-Na', title: 'Hypernatremia', color: '#3b82f6' },
-  { id: 'hypona', label: 'HYPO-Na', title: 'Hyponatremia', color: '#93c5fd' },
-  { id: 'hyperk', label: 'HYPER-K', title: 'Hyperkalemia', color: '#8b5cf6' },
-  { id: 'hypok', label: 'HYPO-K', title: 'Hypokalemia', color: '#c4b5fd' },
-];
+      function addElXP(n) {
+        elXP += n;
+        document.getElementById('el-xp').textContent = `XP: ${elXP}`;
+      }
 
-const SORTER_SYMPTOMS = [
-  { text: 'Peaked T waves on EKG', correct: 'hyperk' },
-  { text: 'Prominent U wave on EKG', correct: 'hypok' },
-  { text: 'Intense thirst + dry mucous membranes', correct: 'hyperna' },
-  { text: 'N/V + abdominal cramps', correct: 'hypona' },
-  { text: 'Confusion + seizures (water excess)', correct: 'hypona' },
-  { text: 'Agitation + restlessness (high sodium)', correct: 'hyperna' },
-  { text: 'Muscle weakness + cramps (high K)', correct: 'hyperk' },
-  { text: 'Constipation + hypoactive bowel sounds', correct: 'hypok' },
-  { text: 'Diarrhea + vomiting (high K)', correct: 'hyperk' },
-  { text: 'Postural hypotension + weight loss', correct: 'hypona' },
-  { text: 'Edema + weight gain (sodium excess)', correct: 'hyperna' },
-  { text: 'Fatigue + irritability (low K)', correct: 'hypok' },
-];
+      // =============================================
+      // TABS
+      // =============================================
+      function switchEl(tab) {
+        document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
+        document.getElementById(tab + '-view').classList.add('active');
+        document
+          .querySelectorAll('.nav-btn')
+          [['explore', 'sort', 'quiz'].indexOf(tab)].classList.add('active');
+        if (tab === 'sort' && !document.getElementById('symptom-pool').innerHTML) initSorter();
+        if (tab === 'quiz') renderElQuizSelect();
+      }
 
-// =============================================
-// STATE
-// =============================================
-let elXP = 0;
-let elQuizQ = [], elQuizIdx = 0, elQuizScore = 0, elQuizAnswered = false, elQuizType = 'all';
-let sorterSelectedSym = null, sorterPlacements = {};
+      // =============================================
+      // EXPLORER
+      // =============================================
+      function showEl(key) {
+        const el = EL_DATA[key];
+        addElXP(3);
 
-function addElXP(n) {
-  elXP += n;
-  document.getElementById('el-xp').textContent = `XP: ${elXP}`;
-}
+        const renderSide = (side, type) => {
+          const cardClass = type === 'hyper' ? 'hyper-card ic-hyper' : 'hypo-card ic-hypo';
+          const titleClass = type === 'hyper' ? 'ic-hyper-title' : 'ic-hypo-title';
+          const tagClass = type === 'hyper' ? 'cause-tag-hyper' : 'cause-tag-hypo';
+          const txColors = { mild: 'tx-mild', moderate: 'tx-moderate', severe: 'tx-severe' };
 
-// =============================================
-// TABS
-// =============================================
-function switchEl(tab) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(tab + '-view').classList.add('active');
-  document.querySelectorAll('.nav-btn')[['explore','sort','quiz'].indexOf(tab)].classList.add('active');
-  if (tab === 'sort' && !document.getElementById('symptom-pool').innerHTML) initSorter();
-  if (tab === 'quiz') renderElQuizSelect();
-}
-
-// =============================================
-// EXPLORER
-// =============================================
-function showEl(key) {
-  const el = EL_DATA[key];
-  addElXP(3);
-
-  const renderSide = (side, type) => {
-    const cardClass = type === 'hyper' ? 'hyper-card ic-hyper' : 'hypo-card ic-hypo';
-    const titleClass = type === 'hyper' ? 'ic-hyper-title' : 'ic-hypo-title';
-    const tagClass = type === 'hyper' ? 'cause-tag-hyper' : 'cause-tag-hypo';
-    const txColors = { mild: 'tx-mild', moderate: 'tx-moderate', severe: 'tx-severe' };
-
-    return `
+          return `
       <div class="imbalance-card ${cardClass}">
         <div class="ic-title ${titleClass}">
           ${type === 'hyper' ? '↑' : '↓'} ${side.name}
@@ -797,25 +1325,25 @@ function showEl(key) {
 
         <div class="ic-section">
           <div class="ic-section-label">Causes</div>
-          ${side.causes.map(c => `<span class="cause-tag ${tagClass}">${c}</span>`).join('')}
+          ${side.causes.map((c) => `<span class="cause-tag ${tagClass}">${c}</span>`).join('')}
         </div>
 
         <div class="ic-section">
           <div class="ic-section-label">Symptoms</div>
-          ${side.symptoms.map(s => `<div class="symptom-row"><span class="s-icon">${s.substring(0,2)}</span><span>${s.substring(2)}</span></div>`).join('')}
+          ${side.symptoms.map((s) => `<div class="symptom-row"><span class="s-icon">${s.substring(0, 2)}</span><span>${s.substring(2)}</span></div>`).join('')}
         </div>
 
         <div class="ic-section">
           <div class="ic-section-label">Treatment</div>
-          ${side.treatment.map(t => `<div class="tx-item ${txColors[t.level]}">${t.text}</div>`).join('')}
+          ${side.treatment.map((t) => `<div class="tx-item ${txColors[t.level]}">${t.text}</div>`).join('')}
         </div>
 
         ${side.ekg ? `<div class="ekg-badge">${side.ekg}</div>` : ''}
       </div>
     `;
-  };
+        };
 
-  document.getElementById('el-detail').innerHTML = `
+        document.getElementById('el-detail').innerHTML = `
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
       <div style="width:60px;height:60px;border-radius:10px;border:2px solid ${el.color};display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.2)">
         <div style="font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:600;color:${el.color}">${el.symbol}</div>
@@ -830,83 +1358,93 @@ function showEl(key) {
       ${renderSide(el.hypo, 'hypo')}
     </div>
   `;
-}
+      }
 
-// =============================================
-// SYMPTOM SORTER
-// =============================================
-function initSorter() {
-  sorterSelectedSym = null;
-  sorterPlacements = {};
+      // =============================================
+      // SYMPTOM SORTER
+      // =============================================
+      function initSorter() {
+        sorterSelectedSym = null;
+        sorterPlacements = {};
 
-  const shuffled = [...SORTER_SYMPTOMS].sort(() => Math.random()-0.5);
-  document.getElementById('symptom-pool').innerHTML = shuffled.map((s,i) =>
-    `<div class="sym-card" id="sym-${i}" onclick="selectSym(${i},'${s.correct}')">${s.text}</div>`
-  ).join('');
+        const shuffled = [...SORTER_SYMPTOMS].sort(() => Math.random() - 0.5);
+        document.getElementById('symptom-pool').innerHTML = shuffled
+          .map(
+            (s, i) =>
+              `<div class="sym-card" id="sym-${i}" onclick="selectSym(${i},'${s.correct}')">${s.text}</div>`
+          )
+          .join('');
 
-  document.getElementById('drop-zones').innerHTML = SORTER_ZONES.map(z => `
+        document.getElementById('drop-zones').innerHTML = SORTER_ZONES.map(
+          (z) => `
     <div class="drop-zone" onclick="placeInZone('${z.id}')">
       <div class="dz-title" style="background:${z.color}22;color:${z.color};border:1px solid ${z.color}44">${z.label}</div>
       <div class="dz-items" id="dz-items-${z.id}"></div>
     </div>
-  `).join('');
+  `
+        ).join('');
 
-  document.getElementById('sorter-score').textContent = '';
-  // Store mapping of sym index → correct zone
-  window._symData = shuffled.map((s,i) => ({ i, text: s.text, correct: s.correct }));
-}
+        document.getElementById('sorter-score').textContent = '';
+        // Store mapping of sym index → correct zone
+        window._symData = shuffled.map((s, i) => ({ i, text: s.text, correct: s.correct }));
+      }
 
-function selectSym(idx, correct) {
-  if (document.getElementById(`sym-${idx}`).classList.contains('placed')) return;
-  document.querySelectorAll('.sym-card').forEach(c => c.classList.remove('selected-sym'));
-  sorterSelectedSym = { idx, correct };
-  document.getElementById(`sym-${idx}`).classList.add('selected-sym');
-}
+      function selectSym(idx, correct) {
+        if (document.getElementById(`sym-${idx}`).classList.contains('placed')) return;
+        document.querySelectorAll('.sym-card').forEach((c) => c.classList.remove('selected-sym'));
+        sorterSelectedSym = { idx, correct };
+        document.getElementById(`sym-${idx}`).classList.add('selected-sym');
+      }
 
-function placeInZone(zoneId) {
-  if (!sorterSelectedSym) return;
-  const { idx, correct } = sorterSelectedSym;
-  const symEl = document.getElementById(`sym-${idx}`);
-  const text = symEl.textContent;
+      function placeInZone(zoneId) {
+        if (!sorterSelectedSym) return;
+        const { idx, correct } = sorterSelectedSym;
+        const symEl = document.getElementById(`sym-${idx}`);
+        const text = symEl.textContent;
 
-  symEl.classList.remove('selected-sym');
-  symEl.classList.add('placed');
+        symEl.classList.remove('selected-sym');
+        symEl.classList.add('placed');
 
-  sorterPlacements[idx] = { zoneId, correct, text };
+        sorterPlacements[idx] = { zoneId, correct, text };
 
-  const itemsDiv = document.getElementById('dz-items-' + zoneId);
-  itemsDiv.innerHTML += `<div class="placed-sym" id="placed-${idx}" style="border-color:var(--border);background:var(--surface2);color:var(--text)">${text}</div>`;
+        const itemsDiv = document.getElementById('dz-items-' + zoneId);
+        itemsDiv.innerHTML += `<div class="placed-sym" id="placed-${idx}" style="border-color:var(--border);background:var(--surface2);color:var(--text)">${text}</div>`;
 
-  sorterSelectedSym = null;
-}
+        sorterSelectedSym = null;
+      }
 
-function checkSorter() {
-  let correct = 0, total = Object.keys(sorterPlacements).length;
-  if (total === 0) { document.getElementById('sorter-score').textContent = 'Place some symptoms first!'; return; }
+      function checkSorter() {
+        let correct = 0,
+          total = Object.keys(sorterPlacements).length;
+        if (total === 0) {
+          document.getElementById('sorter-score').textContent = 'Place some symptoms first!';
+          return;
+        }
 
-  Object.entries(sorterPlacements).forEach(([idx, data]) => {
-    const el = document.getElementById('placed-' + idx);
-    if (data.zoneId === data.correct) {
-      el.className = 'placed-sym placed-correct';
-      correct++;
-      addElXP(5);
-    } else {
-      el.className = 'placed-sym placed-wrong';
-      const correctZone = SORTER_ZONES.find(z => z.id === data.correct);
-      el.title = `Belongs to: ${correctZone ? correctZone.title : data.correct}`;
-    }
-  });
+        Object.entries(sorterPlacements).forEach(([idx, data]) => {
+          const el = document.getElementById('placed-' + idx);
+          if (data.zoneId === data.correct) {
+            el.className = 'placed-sym placed-correct';
+            correct++;
+            addElXP(5);
+          } else {
+            el.className = 'placed-sym placed-wrong';
+            const correctZone = SORTER_ZONES.find((z) => z.id === data.correct);
+            el.title = `Belongs to: ${correctZone ? correctZone.title : data.correct}`;
+          }
+        });
 
-  const pct = Math.round((correct/total)*100);
-  document.getElementById('sorter-score').textContent = `✓ ${correct}/${total} correct (${pct}%) — Wrong answers shown in red. Hover to see correct zone.`;
-}
+        const pct = Math.round((correct / total) * 100);
+        document.getElementById('sorter-score').textContent =
+          `✓ ${correct}/${total} correct (${pct}%) — Wrong answers shown in red. Hover to see correct zone.`;
+      }
 
-// =============================================
-// QUIZ
-// =============================================
-function renderElQuizSelect() {
-  elQuizType = 'all';
-  document.getElementById('el-quiz-wrap').innerHTML = `
+      // =============================================
+      // QUIZ
+      // =============================================
+      function renderElQuizSelect() {
+        elQuizType = 'all';
+        document.getElementById('el-quiz-wrap').innerHTML = `
     <div style="text-align:center">
       <h2 style="font-size:1.8rem;font-weight:800;margin-bottom:8px">Electrolyte Quiz ⚡</h2>
       <p style="color:var(--muted);margin-bottom:4px">Test your knowledge on causes, symptoms, and treatments</p>
@@ -933,75 +1471,93 @@ function renderElQuizSelect() {
       <button class="btn-start-el" onclick="startElQuiz()">START QUIZ →</button>
     </div>
   `;
-}
+      }
 
-function setElQT(type, el) {
-  elQuizType = type;
-  document.querySelectorAll('.qsel-card').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
-}
+      function setElQT(type, el) {
+        elQuizType = type;
+        document.querySelectorAll('.qsel-card').forEach((c) => c.classList.remove('sel'));
+        el.classList.add('sel');
+      }
 
-function startElQuiz() {
-  let pool = elQuizType === 'all' ? EL_QUESTIONS : EL_QUESTIONS.filter(q => q.cat === elQuizType);
-  if (!pool.length) pool = EL_QUESTIONS;
-  elQuizQ = [...pool].sort(() => Math.random()-0.5).slice(0, Math.min(8, pool.length));
-  elQuizIdx = 0; elQuizScore = 0; elQuizAnswered = false;
-  renderElQuestion();
-}
+      function startElQuiz() {
+        let pool =
+          elQuizType === 'all' ? EL_QUESTIONS : EL_QUESTIONS.filter((q) => q.cat === elQuizType);
+        if (!pool.length) pool = EL_QUESTIONS;
+        elQuizQ = [...pool].sort(() => Math.random() - 0.5).slice(0, Math.min(8, pool.length));
+        elQuizIdx = 0;
+        elQuizScore = 0;
+        elQuizAnswered = false;
+        renderElQuestion();
+      }
 
-function renderElQuestion() {
-  if (elQuizIdx >= elQuizQ.length) { renderElResults(); return; }
-  const q = elQuizQ[elQuizIdx];
-  elQuizAnswered = false;
-  const prog = (elQuizIdx / elQuizQ.length) * 100;
+      function renderElQuestion() {
+        if (elQuizIdx >= elQuizQ.length) {
+          renderElResults();
+          return;
+        }
+        const q = elQuizQ[elQuizIdx];
+        elQuizAnswered = false;
+        const prog = (elQuizIdx / elQuizQ.length) * 100;
 
-  const catColors = { Sodium: 'var(--na)', Potassium: 'var(--k)', Calcium: 'var(--ca)', Magnesium: 'var(--mg)', Phosphate: 'var(--phos)' };
+        const catColors = {
+          Sodium: 'var(--na)',
+          Potassium: 'var(--k)',
+          Calcium: 'var(--ca)',
+          Magnesium: 'var(--mg)',
+          Phosphate: 'var(--phos)',
+        };
 
-  document.getElementById('el-quiz-wrap').innerHTML = `
+        document.getElementById('el-quiz-wrap').innerHTML = `
     <div style="text-align:center;margin-bottom:20px">
       <div style="font-size:1.4rem;font-weight:800;margin-bottom:4px">Electrolyte Quiz</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted)">Q${elQuizIdx+1} / ${elQuizQ.length} · Score: ${elQuizScore}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted)">Q${elQuizIdx + 1} / ${elQuizQ.length} · Score: ${elQuizScore}</div>
       <div class="el-qprogbar"><div class="el-qprogfill" style="width:${prog}%"></div></div>
     </div>
     <div class="el-qcard">
-      <div class="el-qcat" style="color:${catColors[q.cat]||'var(--mg)'}">${q.cat}</div>
+      <div class="el-qcat" style="color:${catColors[q.cat] || 'var(--mg)'}">${q.cat}</div>
       <div class="el-qtext">${q.q}</div>
       <div class="el-qopts">
-        ${q.opts.map((o,i) => `<button class="el-qopt" onclick="answerElQ(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+        ${q.opts.map((o, i) => `<button class="el-qopt" onclick="answerElQ(${i})">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}
       </div>
       <div id="el-qfb"></div>
     </div>
   `;
-}
+      }
 
-function answerElQ(chosen) {
-  if (elQuizAnswered) return;
-  elQuizAnswered = true;
-  const q = elQuizQ[elQuizIdx];
-  const correct = chosen === q.ans;
-  if (correct) { elQuizScore++; addElXP(20); }
+      function answerElQ(chosen) {
+        if (elQuizAnswered) return;
+        elQuizAnswered = true;
+        const q = elQuizQ[elQuizIdx];
+        const correct = chosen === q.ans;
+        if (correct) {
+          elQuizScore++;
+          addElXP(20);
+        }
 
-  document.querySelectorAll('.el-qopt').forEach((btn, i) => {
-    btn.classList.add('disabled');
-    if (i === q.ans) btn.classList.add('correct');
-    else if (i === chosen && !correct) btn.classList.add('wrong');
-  });
+        document.querySelectorAll('.el-qopt').forEach((btn, i) => {
+          btn.classList.add('disabled');
+          if (i === q.ans) btn.classList.add('correct');
+          else if (i === chosen && !correct) btn.classList.add('wrong');
+        });
 
-  document.getElementById('el-qfb').innerHTML = `
+        document.getElementById('el-qfb').innerHTML = `
     <div class="el-qfb ${correct ? 'el-qfb-correct' : 'el-qfb-wrong'}">
       ${correct ? '✅ Correct!' : '❌ Not quite.'} ${q.exp}
     </div>
-    <button class="el-qnext" onclick="nextElQ()">${elQuizIdx+1 < elQuizQ.length ? 'NEXT →' : 'RESULTS →'}</button>
+    <button class="el-qnext" onclick="nextElQ()">${elQuizIdx + 1 < elQuizQ.length ? 'NEXT →' : 'RESULTS →'}</button>
   `;
-}
+      }
 
-function nextElQ() { elQuizIdx++; renderElQuestion(); }
+      function nextElQ() {
+        elQuizIdx++;
+        renderElQuestion();
+      }
 
-function renderElResults() {
-  const pct = Math.round((elQuizScore / elQuizQ.length)*100);
-  addElXP(pct >= 70 ? 40 : 10);
-  const emoji = pct>=90?'🏆':pct>=70?'⭐':'📚';
-  document.getElementById('el-quiz-wrap').innerHTML = `
+      function renderElResults() {
+        const pct = Math.round((elQuizScore / elQuizQ.length) * 100);
+        addElXP(pct >= 70 ? 40 : 10);
+        const emoji = pct >= 90 ? '🏆' : pct >= 70 ? '⭐' : '📚';
+        document.getElementById('el-quiz-wrap').innerHTML = `
     <div class="qresult-el">
       <div style="font-size:3rem">${emoji}</div>
       <div class="qresult-el-score">${elQuizScore}/${elQuizQ.length}</div>
@@ -1012,7 +1568,7 @@ function renderElResults() {
       </div>
     </div>
   `;
-}
-</script>
-</body>
+      }
+    </script>
+  </body>
 </html>
